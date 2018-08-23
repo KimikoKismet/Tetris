@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.GameController">
+   <children>
+      <Canvas fx:id="GameBoard" height="631.0" layoutX="176.0" layoutY="36.0" width="385.0" />
+      <Label layoutX="43.0" layoutY="36.0" text="SCORE:">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Label>
+      <Canvas fx:id="Kosticka" height="100.0" layoutX="43.0" layoutY="114.0" width="100.0" />
+      <Label fx:id="ScoreLabel" layoutX="43.0" layoutY="70.0">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+      <Button fx:id="BackButton" layoutX="383.0" layoutY="706.0" mnemonicParsing="false" onAction="#backButtonAction" text="Back to Menu">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
