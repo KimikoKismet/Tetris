@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ScoreController">
+<AnchorPane fx:id="Pain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ScoreController">
    <children>
-      <TableView layoutX="50.0" layoutY="30.0" prefHeight="700.0" prefWidth="500.0">
+      <TableView layoutX="50.0" layoutY="30.0" prefHeight="635.0" prefWidth="500.0">
         <columns>
             <TableColumn prefWidth="38.0" />
           <TableColumn prefWidth="203.0" text="Player " />
           <TableColumn prefWidth="258.0" text="High Score" />
         </columns>
       </TableView>
-      <Button fx:id="BackButton" layoutX="233.0" layoutY="740.0" mnemonicParsing="false" onAction="#backButtonAction" text="Back to Menu">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Button>
+      <ImageView fx:id="BackButton" fitHeight="77.0" fitWidth="120.0" layoutX="240.0" layoutY="679.0" onMouseClicked="#backButtonAction" onMouseEntered="#BackClickButton" onMouseExited="#BackReleaseButton" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

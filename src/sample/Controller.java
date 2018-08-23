@@ -21,6 +21,7 @@ public class Controller {
     public Image Multiplayer;
     public Image Highscores;
     public Image Exit;
+    public int pocethracu;
 
 
     @FXML
@@ -45,15 +46,17 @@ public class Controller {
     }
 
     public void singleplayerButtonAction() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("game.fxml"));    //načtení popisu scény
-        Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
-        Main.stage.show();                                                           //zobrazí připravenou scénu
+        Parent root = FXMLLoader.load(getClass().getResource("game.fxml"));             //načtení popisu scény
+        Main.stage.setScene(new Scene(root, 600, 800));                         //vytvoření scény a nastavení zobrazení
+        Main.stage.show();                                                                    //zobrazí připravenou scénu
+        pocethracu = 1;
     }
 
     public void MultiplayerButtonAction() throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("game.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();                                                           //zobrazí připravenou scénu
+        pocethracu = 2;
     }
 
     public void HighScoresButtonAction() throws Exception {
