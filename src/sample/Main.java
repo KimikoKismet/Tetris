@@ -16,6 +16,7 @@ public class Main extends Application {
         primaryStage.setTitle("Tetris");
         primaryStage.setScene(new Scene(root, 600, 800));
         primaryStage.getIcons().add(new Image(Controller.class.getResource("Icon.png").toExternalForm()));
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

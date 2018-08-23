@@ -25,4 +25,5 @@ public class GameController {
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();
     }
+
 }

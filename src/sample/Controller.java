@@ -25,7 +25,7 @@ public class Controller {
 
     @FXML
     public void initialize() throws Exception {
-        Image image = new Image(Controller.class.getResource("MenuBackground.jpeg").toExternalForm());
+        Image image = new Image(Controller.class.getResource("MenuBackground.png").toExternalForm());
         BackgroundSize backgroundSize = new BackgroundSize(100,100, true, true, true, false);
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
