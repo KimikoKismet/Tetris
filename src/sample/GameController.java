@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,7 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import sample.tvarykosticek.Trubka;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,7 +20,7 @@ import javafx.scene.layout.*;
  * Date: 22. 8. 2018
  * Time: 22:27
  */
-public class GameController {
+public class GameController implements EventHandler<KeyEvent> {
 
     public Canvas GameBoard;
     public Canvas Kosticka;
@@ -32,6 +35,26 @@ public class GameController {
         Main.stage.show();
     }
 
+    @Override
+    public void handle(KeyEvent event) {
+        switch (event.getCode()) {
+            case UP:
+                System.out.println("Rotovat kostku");   // TODO rotate
+                break;
+            case DOWN:
+                System.out.println("Rychleji dolu");    // TODO move down
+                break;
+            case LEFT:
+                System.out.println("Doleva");           // TODO move left
+                break;
+            case RIGHT:
+                System.out.println("Doprava");           // TODO move right
+                break;
+            default:
+                // nop
+        }
+    }
+
     @FXML
     public void initialize() throws Exception {
         Image image = new Image(Controller.class.getResource("TetrisBackground.png").toExternalForm());
@@ -41,6 +64,7 @@ public class GameController {
         Pain.setBackground(background);
         Back = new Image(Controller.class.getResource("BackButton.png").toExternalForm());
         BackButton.setImage(Back);
+        Trubka trubka = new Trubka(Controller.class.getResource("TrubkaKosticka.png").toExternalForm());
     }
 
     public void BackClickButton() {
@@ -50,5 +74,9 @@ public class GameController {
 
     public void BackReleaseButton() {
         BackButton.setImage(Back);
+    }
+
+    public void KeyListener() {
+
     }
 }

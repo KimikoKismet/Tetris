@@ -15,6 +15,6 @@ public class LkoNormal extends Tvar {
                 {new Kosticka(cesta),null,null},
                 {new Kosticka(cesta),new Kosticka(cesta),null}
         };
-
     }
+
 }

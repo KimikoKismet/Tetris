@@ -46,10 +46,14 @@ public class Controller {
     }
 
     public void singleplayerButtonAction() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("game.fxml"));             //načtení popisu scény
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game.fxml"));
+        Parent root = fxmlLoader.load();
+
         Main.stage.setScene(new Scene(root, 600, 800));                         //vytvoření scény a nastavení zobrazení
         Main.stage.show();                                                                    //zobrazí připravenou scénu
         pocethracu = 1;
+
+        Main.stage.getScene().setOnKeyPressed(fxmlLoader.<GameController>getController());
     }
 
     public void MultiplayerButtonAction() throws Exception {
