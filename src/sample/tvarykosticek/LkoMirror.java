@@ -12,9 +12,9 @@ import sample.Kosticka;
 public class LkoMirror extends Tvar {
     public LkoMirror(Image image) {
         this.tvar = new Kosticka[][] {
-                {null,new Kosticka(image),null},
-                {null,new Kosticka(image),null},
-                {new Kosticka(image),new Kosticka(image),null}
+                {null,new Kosticka(image)},
+                {null,new Kosticka(image)},
+                {new Kosticka(image),new Kosticka(image)}
         };
 
     }

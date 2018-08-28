@@ -12,10 +12,10 @@ import sample.Kosticka;
 public class Trubka extends Tvar {
     public Trubka(Image image) {
         this.tvar = new Kosticka[][] {
-                {new Kosticka(image),null,null},
-                {new Kosticka(image),null,null},
-                {new Kosticka(image),null,null},
-                {new Kosticka(image),null,null}
+                {new Kosticka(image)},
+                {new Kosticka(image)},
+                {new Kosticka(image)},
+                {new Kosticka(image)}
         };
 
     }

@@ -14,7 +14,6 @@ public class TkoKosticka extends Tvar {
         this.tvar = new Kosticka[][] {
                 {null,new Kosticka(image),null},
                 {new Kosticka(image),new Kosticka(image),new Kosticka(image)},
-                {null,null,null}
         };
     }
 }

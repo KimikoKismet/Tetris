@@ -58,13 +58,16 @@ public class GameController implements EventHandler<KeyEvent> {
                 System.out.println("Rotovat kostku");   // TODO rotate
                 break;
             case DOWN:
-                System.out.println("Rychleji dolu");    // TODO move down
+                System.out.println("Rychleji dolu");
+                posun(Smer.DOLU);
                 break;
             case LEFT:
-                System.out.println("Doleva");           // TODO move left
+                System.out.println("Doleva");
+                posun(Smer.DOLEVA);
                 break;
             case RIGHT:
-                System.out.println("Doprava");           // TODO move right
+                System.out.println("Doprava");
+                posun(Smer.DOPRAVA);
                 break;
             default:
                 // nop
@@ -95,6 +98,8 @@ public class GameController implements EventHandler<KeyEvent> {
         kostickyImages.put(KostickaEnum.TKO,nactiObrazek("TkoKosticka.png"));
         kostickyImages.put(KostickaEnum.LKO,nactiObrazek("LkoKosticka.png"));
         kostickyImages.put(KostickaEnum.ZKO,nactiObrazek("ZkoKosticka.png"));
+
+        GameInit();
 
 
     }
@@ -147,19 +152,41 @@ public class GameController implements EventHandler<KeyEvent> {
         NasledujuKosticka = nahodnaKosticka();
         hraciPole = new Kosticka[HRA_POCET_RADKU][HRA_POCET_SLOUPCU];
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(POCATECNI_RYCHLOST),          //vytvoreni TIMERU
-                ae -> gameLoop()));
-        timeline.setCycleCount(Animation.INDEFINITE);
+                ae -> gameLoop()));                                                                 //ae = Action Event
+        timeline.setCycleCount(Animation.INDEFINITE);   //wutever
         timeline.play();
     }
 
     public void gameLoop() {
-        //TODO posouvat kosticku dolu
+        posun(Smer.DOLU);
+
     }
 
     public void posun(Smer smer) {
         int x = AktualKosticka.getX();
         int y = AktualKosticka.getY();
+        int kontrola = 0;
         Kosticka[][] copyPole = ArrayUtils.copy(hraciPole);
+        x = x + smer.getX();
+        y = y + smer.getY();
+        for (int radek = 0; radek<AktualKosticka.getTvar().length; radek++) {
+            for (int sloupec = 0; sloupec<AktualKosticka.getTvar()[radek].length; sloupec++) {
+                if (radek+y == hraciPole.length) {
+                    AktualKosticka = NasledujuKosticka;
+                    NasledujuKosticka = nahodnaKosticka();
+                    kontrola = 1;
+                } else if (hraciPole[radek+y][sloupec+x] == null) {
+                    copyPole[radek + y][sloupec + x] = AktualKosticka.getTvar()[radek][sloupec];
+                }
+            }
+        }
+        if (kontrola == 0) {
+            vykresleni(GameBoard.getGraphicsContext2D(), copyPole);
+            AktualKosticka.setX(x);
+            AktualKosticka.setY(y);
+        } else {
+            hraciPole = copyPole;
+        }
 
     }
 

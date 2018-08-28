@@ -13,9 +13,8 @@ import sample.Kosticka;
 public class Ctverec extends Tvar {
     public Ctverec(Image image) {
         this.tvar = new Kosticka[][] {
-                {new Kosticka(image),new Kosticka(image),null},
-                {new Kosticka(image),new Kosticka(image),null},
-                {null,null,null}
+                {new Kosticka(image),new Kosticka(image)},
+                {new Kosticka(image),new Kosticka(image)},
         };
     }
 }

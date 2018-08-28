@@ -14,7 +14,6 @@ public class ZkoMirror extends Tvar {
         this.tvar = new Kosticka[][] {
                 {null,new Kosticka(image),new Kosticka(image)},
                 {new Kosticka(image),new Kosticka(image),null},
-                {null,null,null}
         };
 
     }
