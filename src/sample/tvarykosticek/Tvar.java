@@ -22,7 +22,7 @@ public abstract class Tvar {
     }
 
     public int[][] getBody() {
-        int[][] souradnice = new int[4][2];
+        int[][] souradnice = new int[2][4];
         int k = 0;
         Kosticka[][] kostka = getTvar();
         for (int j = 0; j<kostka.length; j++) {

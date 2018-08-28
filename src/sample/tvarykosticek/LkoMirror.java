@@ -1,5 +1,6 @@
 package sample.tvarykosticek;
 
+import javafx.scene.image.Image;
 import sample.Kosticka;
 
 /**
@@ -9,11 +10,12 @@ import sample.Kosticka;
  * Time: 19:14
  */
 public class LkoMirror extends Tvar {
-    public LkoMirror(String cesta) {
+    public LkoMirror(Image image) {
         this.tvar = new Kosticka[][] {
-                {null,new Kosticka(cesta),null},
-                {null,new Kosticka(cesta),null},
-                {new Kosticka(cesta),new Kosticka(cesta),null}
+                {null,new Kosticka(image),null},
+                {null,new Kosticka(image),null},
+                {new Kosticka(image),new Kosticka(image),null}
         };
+
     }
 }

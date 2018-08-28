@@ -1,5 +1,6 @@
 package sample.tvarykosticek;
 
+import javafx.scene.image.Image;
 import sample.Kosticka;
 
 /**
@@ -9,10 +10,10 @@ import sample.Kosticka;
  * Time: 12:09
  */
 public class TkoKosticka extends Tvar {
-    public TkoKosticka(String cesta) {
+    public TkoKosticka(Image image) {
         this.tvar = new Kosticka[][] {
-                {null,new Kosticka(cesta),null},
-                {new Kosticka(cesta),new Kosticka(cesta),new Kosticka(cesta)},
+                {null,new Kosticka(image),null},
+                {new Kosticka(image),new Kosticka(image),new Kosticka(image)},
                 {null,null,null}
         };
     }

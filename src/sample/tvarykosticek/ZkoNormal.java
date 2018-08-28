@@ -1,5 +1,6 @@
 package sample.tvarykosticek;
 
+import javafx.scene.image.Image;
 import sample.Kosticka;
 
 /**
@@ -9,10 +10,10 @@ import sample.Kosticka;
  * Time: 19:15
  */
 public class ZkoNormal extends Tvar {
-    public ZkoNormal(String cesta) {
+    public ZkoNormal(Image image) {
         this.tvar = new Kosticka[][] {
-                {new Kosticka(cesta),new Kosticka(cesta),null},
-                {null,new Kosticka(cesta),new Kosticka(cesta)},
+                {new Kosticka(image),new Kosticka(image),null},
+                {null,new Kosticka(image),new Kosticka(image)},
                 {null,null,null}
         };
 

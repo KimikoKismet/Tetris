@@ -1,12 +1,22 @@
 package sample;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,7 +28,11 @@ public class ScoreController {
     public AnchorPane Pain;
     public Image Back;
     public ImageView BackButton;
+    public TableView Table;
+    public TableColumn Players;
+    public TableColumn Scores;
 
+    @FXML
     public void initialize() {
         Image image = new Image(Controller.class.getResource("TetrisBackground.png").toExternalForm());
         BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
@@ -27,6 +41,24 @@ public class ScoreController {
         Pain.setBackground(background);
         Back = new Image(Controller.class.getResource("BackButton.png").toExternalForm());
         BackButton.setImage(Back);
+        ArrayList<String> scores;
+        Score score = new Score("HighScore.txt");
+        scores = score.prohlizeni();
+        List list = new ArrayList();
+        Players.setCellValueFactory(new PropertyValueFactory("JmenoHrace"));
+        Scores.setCellValueFactory(new PropertyValueFactory("HighScore"));
+        for (String radek : scores) {
+            String[] policka = score.rozdeleni(radek);
+            list.add(new HighScoreItem(policka[0], Integer.parseInt(policka[1])));
+        }
+        ObservableList data = FXCollections.observableList(list);
+        SortedList<HighScoreItem> sortedlist = new SortedList<HighScoreItem>(data,
+                (HighScoreItem item1, HighScoreItem item2) ->
+                {
+                   return item2.getHighScore()-item1.getHighScore();
+                });
+        Table.setItems(sortedlist);
+        //Table.getSortOrder().add(Scores);
     }
 
     public void backButtonAction() throws Exception {

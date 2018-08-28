@@ -9,7 +9,7 @@
 
 <AnchorPane fx:id="Pain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.GameController">
    <children>
-      <Canvas fx:id="GameBoard" height="631.0" layoutX="176.0" layoutY="36.0" width="385.0" />
+      <Canvas fx:id="GameBoard" height="600.0" layoutX="261.0" layoutY="36.0" width="300.0" />
       <Label layoutX="43.0" layoutY="36.0" text="SCORE:">
          <font>
             <Font size="23.0" />
@@ -22,5 +22,6 @@
          </font>
       </Label>
       <ImageView fx:id="BackButton" fitHeight="77.0" fitWidth="120.0" layoutX="441.0" layoutY="667.0" onMouseClicked="#backButtonAction" onMouseEntered="#BackClickButton" onMouseExited="#BackReleaseButton" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="ram" fitHeight="610.0" fitWidth="310.0" layoutX="256.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

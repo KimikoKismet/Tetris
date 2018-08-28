@@ -11,8 +11,8 @@ import javafx.scene.image.Image;
 public class Kosticka {
     private final Image kosticka;
 
-    public Kosticka(String cesta) {
-        kosticka = new Image(cesta);
+    public Kosticka(Image image) {
+        kosticka = image;
     }
 
     public Image getKosticka() {
