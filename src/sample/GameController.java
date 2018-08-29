@@ -206,8 +206,12 @@ public class GameController implements EventHandler<KeyEvent> {
         ScoreLabel.setText(score+"");
     }
 
-    public boolean kontrolaGameOver() {
-        
+    public void kontrolaGameOver() {
+
+    }
+
+    public void GameOver() {
+
     }
 
     public void posunZbytekDolu(int prazdnyRadek) {
@@ -264,5 +268,14 @@ public class GameController implements EventHandler<KeyEvent> {
             }
         }
 
+    }
+
+    public void nasobeniMatic(int[][] pole1, int[][] pole2) {
+        int[][] novaMatice = new int[pole1.length][pole2[0].length];
+        for (int radekNovaMatice = 0; radekNovaMatice<novaMatice.length; radekNovaMatice++) {
+            for (int sloupecNovaMatice = 0; sloupecNovaMatice<novaMatice[0].length; sloupecNovaMatice++) {
+                
+            }
+        }
     }
 }

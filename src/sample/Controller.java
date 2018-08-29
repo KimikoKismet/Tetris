@@ -17,11 +17,13 @@ public class Controller {
     public ImageView MultiplayerButton;
     public ImageView HighScoresButton;
     public ImageView ExitButton;
+    public Image options;
     public Image Singleplayer;
     public Image Multiplayer;
     public Image Highscores;
     public Image Exit;
     public int pocethracu;
+    public ImageView OptionsButton;
 
 
     @FXML
@@ -39,6 +41,8 @@ public class Controller {
         HighScoresButton.setImage(Highscores);
         Exit = new Image(Controller.class.getResource("ExitButton.png").toExternalForm());
         ExitButton.setImage(Exit);
+        options = new Image(Controller.class.getResource("OptionsButton.png").toExternalForm());
+        OptionsButton.setImage(options);
     }
 
     public void ExitButtonAction() {
@@ -73,6 +77,12 @@ public class Controller {
         Main.stage.show();
     }
 
+    public void OptionsButtonAction() throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("options.fxml"));    //načtení popisu scény
+        Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
+        Main.stage.show();
+    }
+
     public void MultiplayerClickButton() {
         Image Multiplayerclick = new Image(Controller.class.getResource("MultiplayerClickButton.png").toExternalForm());
         MultiplayerButton.setImage(Multiplayerclick);
@@ -81,6 +91,7 @@ public class Controller {
     public void MultiplayerReleaseButton() {
         MultiplayerButton.setImage(Multiplayer);
     }
+
     public void SingleplayerClickButton() {
         Image SinglePlayerclick = new Image(Controller.class.getResource("SingleplayerClickButton.png").toExternalForm());
         SingleplayerButton.setImage(SinglePlayerclick);
@@ -104,5 +115,14 @@ public class Controller {
 
     public void ExitReleaseButton() {
         ExitButton.setImage(Exit);
+    }
+
+    public void OptionsClickButton() {
+        Image optionsClick = new Image(Controller.class.getResource("OptionsClickButton.png").toExternalForm());
+        OptionsButton.setImage(optionsClick);
+    }
+
+    public void OptionsReleaseButton() {
+        OptionsButton.setImage(options);
     }
 }
