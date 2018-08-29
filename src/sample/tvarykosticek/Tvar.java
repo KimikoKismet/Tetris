@@ -1,5 +1,6 @@
 package sample.tvarykosticek;
 
+import sample.Constants;
 import sample.Kosticka;
 
 /**
@@ -10,8 +11,8 @@ import sample.Kosticka;
  */
 public abstract class Tvar {
     protected Kosticka[][] tvar;
-    protected int x;
-    protected int y;
+    protected int x = Constants.HRA_POCET_SLOUPCU / 2;
+    protected int y = Constants.POCATECNI_SOURADNICE;
 
     public Kosticka[][] getTvar() {
         return tvar;

@@ -12,4 +12,7 @@ public class Constants {
     public static final int KOSTICKA_SIZE = 30;     // velikost jedne kosticky v pixelech
     public static final int POCET_KOSTICEK = 7;
     public static final int POCATECNI_RYCHLOST = 1000;
+    public static final int POCATECNI_SOURADNICE = -1;
+
+    public static final int SCORE_UMAZANI_RADKU = 100;
 }

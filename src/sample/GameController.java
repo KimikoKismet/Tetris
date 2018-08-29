@@ -44,11 +44,14 @@ public class GameController implements EventHandler<KeyEvent> {
     private Tvar AktualKosticka;
     private Tvar NasledujuKosticka;
     private Kosticka[][] hraciPole;
+    private Timeline timeline;
+    private int score;
 
     public void backButtonAction() throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("menu.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();
+        timeline.stop();
     }
 
     @Override
@@ -60,6 +63,7 @@ public class GameController implements EventHandler<KeyEvent> {
             case DOWN:
                 System.out.println("Rychleji dolu");
                 posun(Smer.DOLU);
+                score = score + 1;
                 break;
             case LEFT:
                 System.out.println("Doleva");
@@ -68,6 +72,11 @@ public class GameController implements EventHandler<KeyEvent> {
             case RIGHT:
                 System.out.println("Doprava");
                 posun(Smer.DOPRAVA);
+                break;
+            case SPACE:
+                while (posun(Smer.DOLU)) {
+                    score = score + 2;
+                }
                 break;
             default:
                 // nop
@@ -81,6 +90,8 @@ public class GameController implements EventHandler<KeyEvent> {
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
         Pain.setBackground(background);
+        score = 0;
+        ScoreLabel.setText(score+"");
 
         Back = new Image(Controller.class.getResource("BackButton.png").toExternalForm());
         BackButton.setImage(Back);
@@ -151,7 +162,8 @@ public class GameController implements EventHandler<KeyEvent> {
         AktualKosticka = nahodnaKosticka();
         NasledujuKosticka = nahodnaKosticka();
         hraciPole = new Kosticka[HRA_POCET_RADKU][HRA_POCET_SLOUPCU];
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(POCATECNI_RYCHLOST),          //vytvoreni TIMERU
+
+        timeline = new Timeline(new KeyFrame(Duration.millis(POCATECNI_RYCHLOST),          //vytvoreni TIMERU
                 ae -> gameLoop()));                                                                 //ae = Action Event
         timeline.setCycleCount(Animation.INDEFINITE);   //wutever
         timeline.play();
@@ -160,32 +172,82 @@ public class GameController implements EventHandler<KeyEvent> {
     public void gameLoop() {
         posun(Smer.DOLU);
 
-    }
-
-    public void posun(Smer smer) {
-        int x = AktualKosticka.getX();
-        int y = AktualKosticka.getY();
-        int kontrola = 0;
-        Kosticka[][] copyPole = ArrayUtils.copy(hraciPole);
-        x = x + smer.getX();
-        y = y + smer.getY();
-        for (int radek = 0; radek<AktualKosticka.getTvar().length; radek++) {
-            for (int sloupec = 0; sloupec<AktualKosticka.getTvar()[radek].length; sloupec++) {
-                if (radek+y == hraciPole.length) {
-                    AktualKosticka = NasledujuKosticka;
-                    NasledujuKosticka = nahodnaKosticka();
-                    kontrola = 1;
-                } else if (hraciPole[radek+y][sloupec+x] == null) {
-                    copyPole[radek + y][sloupec + x] = AktualKosticka.getTvar()[radek][sloupec];
+        int scoreCounter = 0;
+        for (int radek = 0; radek<hraciPole.length; radek++) {
+            boolean kontrola = true;
+            for (int sloupec = 0; sloupec<hraciPole[0].length; sloupec++) {
+                if (hraciPole[radek][sloupec] == null) {
+                    kontrola = false;
+                    break;
                 }
             }
+            if (kontrola) {
+                umazRadek(radek);
+                posunZbytekDolu(radek);
+                scoreCounter++;
+                //score = score + SCORE_UMAZANI_RADKU;
+                //ScoreLabel.setText(score+"");
+
+            }
         }
-        if (kontrola == 0) {
+        switch (scoreCounter) {
+            case 1:
+                score = score + SCORE_UMAZANI_RADKU;
+                break;
+            case 2:
+                score = score + SCORE_UMAZANI_RADKU*3;
+                break;
+            case 3:
+                score = score + SCORE_UMAZANI_RADKU*5;
+                break;
+            default:
+                //nop
+        }
+        ScoreLabel.setText(score+"");
+    }
+
+    public boolean kontrolaGameOver() {
+        
+    }
+
+    public void posunZbytekDolu(int prazdnyRadek) {
+        Kosticka[][] copy = ArrayUtils.copy(hraciPole);
+        for (int radek = prazdnyRadek-1; radek>0; radek--) {
+            for (int sloupec = 0; sloupec<hraciPole[0].length; sloupec++) {
+                copy[radek+1][sloupec] = hraciPole[radek][sloupec];
+            }
+        }
+        vykresleni(GameBoard.getGraphicsContext2D(), copy);
+        hraciPole = copy;
+    }
+
+    public void umazRadek(int radek) {
+        for (int sloupec = 0; sloupec<hraciPole[0].length; sloupec++) {
+            hraciPole[radek][sloupec] = null;
+        }
+    }
+
+    public boolean posun(Smer smer) {
+        int x = AktualKosticka.getX() + smer.getX();
+        int y = AktualKosticka.getY() + smer.getY();
+
+        // Vytvoreni kopie hraciho pole s vlozenou kostickou s posunem dle smeru
+        Kosticka[][] copyPole = ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, smer.getX(), smer.getY());
+
+        if (copyPole != null) {
             vykresleni(GameBoard.getGraphicsContext2D(), copyPole);
             AktualKosticka.setX(x);
             AktualKosticka.setY(y);
+            return true;
         } else {
-            hraciPole = copyPole;
+            /*
+             * Pokud je null, tak to znamena, ze se kostka nemuze pohnout smerem dolu a je nutne pridat do
+             * spadlych kostek predchozi krok tj. kdy je kostka o jedna vyse
+             */
+            hraciPole = ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, 0, 0);
+            AktualKosticka = NasledujuKosticka;
+            NasledujuKosticka = nahodnaKosticka();
+            return false;
         }
 
     }
