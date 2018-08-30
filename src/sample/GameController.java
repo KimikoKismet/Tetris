@@ -274,7 +274,7 @@ public class GameController implements EventHandler<KeyEvent> {
         int[][] novaMatice = new int[pole1.length][pole2[0].length];
         for (int radekNovaMatice = 0; radekNovaMatice<novaMatice.length; radekNovaMatice++) {
             for (int sloupecNovaMatice = 0; sloupecNovaMatice<novaMatice[0].length; sloupecNovaMatice++) {
-                
+
             }
         }
     }
