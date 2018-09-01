@@ -11,9 +11,12 @@ import sample.Kosticka;
  */
 public class ZkoNormal extends Tvar {
     public ZkoNormal(Image image) {
+        super(image); //zavola konstruktor predka
         this.tvar = new Kosticka[][] {
-                {new Kosticka(image),new Kosticka(image),null},
-                {null,new Kosticka(image),new Kosticka(image)},
+                {new Kosticka(image),new Kosticka(image),null,null},
+                {null,new Kosticka(image),new Kosticka(image), null},
+                {null,null,null,null},
+                {null,null,null,null},
         };
     }
 }

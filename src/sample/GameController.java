@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -20,6 +21,7 @@ import sample.tvarykosticek.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import static sample.Constants.*;
@@ -46,6 +48,8 @@ public class GameController implements EventHandler<KeyEvent> {
     private Kosticka[][] hraciPole;
     private Timeline timeline;
     private int score;
+    private Image NasledujiciKosticka;
+    private Kosticka[][] NasledujiciKostickaPole;
 
     public void backButtonAction() throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("menu.fxml"));    //načtení popisu scény
@@ -58,7 +62,8 @@ public class GameController implements EventHandler<KeyEvent> {
     public void handle(KeyEvent event) {
         switch (event.getCode()) {
             case UP:
-                System.out.println("Rotovat kostku");   // TODO rotate
+                System.out.println("Rotovat kostku");
+                rotace(AktualKosticka,ULTIMATE_MATICE);// TODO rota
                 break;
             case DOWN:
                 System.out.println("Rychleji dolu");
@@ -102,6 +107,9 @@ public class GameController implements EventHandler<KeyEvent> {
         gc.drawImage(PlayBackground,0,0);                                                               //vykresleni hraciho pozadi
         Image Ram = new Image(Controller.class.getResource("Okrajpole.png").toExternalForm());
         ram.setImage(Ram);
+        NasledujiciKosticka = new Image(Controller.class.getResource("NasledujiciKosticka.png").toExternalForm());
+        GraphicsContext gc2 = Kosticka.getGraphicsContext2D();
+        gc2.drawImage(NasledujiciKosticka,0,0);                                                               //vykresleni hraciho pozadi
 
         kostickyImages = new HashMap<>(KostickaEnum.values().length);
         kostickyImages.put(KostickaEnum.CTVEREC,nactiObrazek("CtverecKosticka.png"));
@@ -109,6 +117,8 @@ public class GameController implements EventHandler<KeyEvent> {
         kostickyImages.put(KostickaEnum.TKO,nactiObrazek("TkoKosticka.png"));
         kostickyImages.put(KostickaEnum.LKO,nactiObrazek("LkoKosticka.png"));
         kostickyImages.put(KostickaEnum.ZKO,nactiObrazek("ZkoKosticka.png"));
+
+
 
         GameInit();
 
@@ -170,7 +180,12 @@ public class GameController implements EventHandler<KeyEvent> {
     }
 
     public void gameLoop() {
+        if (kontrolaGameOver()) {
+            GameOver();
+        }
         posun(Smer.DOLU);
+
+        vykresleni(Kosticka.getGraphicsContext2D(),NasledujuKosticka.getTvar(),NasledujiciKosticka);
 
         int scoreCounter = 0;
         for (int radek = 0; radek<hraciPole.length; radek++) {
@@ -204,14 +219,42 @@ public class GameController implements EventHandler<KeyEvent> {
                 //nop
         }
         ScoreLabel.setText(score+"");
+
+
     }
 
-    public void kontrolaGameOver() {
 
+    public boolean kontrolaGameOver() {
+        for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
+            if (hraciPole[0][sloupec] != null) {
+                return true;
+            }
+            if (ArrayUtils.vlozeniKosticky(AktualKosticka,hraciPole,0,0) == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void GameOver() {
+        timeline.stop();
 
+        String Name;
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Game Over");
+        dialog.setHeaderText("GAME OVER. Do you want to save your score");
+        dialog.setContentText("Please enter your name loser:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            if (result.get().length()<3) {
+                Name = "N00b.";
+            }
+            else {
+                Name = result.get();
+            }
+            System.out.println(Name);
+        }
     }
 
     public void posunZbytekDolu(int prazdnyRadek) {
@@ -221,7 +264,7 @@ public class GameController implements EventHandler<KeyEvent> {
                 copy[radek+1][sloupec] = hraciPole[radek][sloupec];
             }
         }
-        vykresleni(GameBoard.getGraphicsContext2D(), copy);
+        vykresleni(GameBoard.getGraphicsContext2D(), copy, PlayBackground);
         hraciPole = copy;
     }
 
@@ -239,7 +282,7 @@ public class GameController implements EventHandler<KeyEvent> {
         Kosticka[][] copyPole = ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, smer.getX(), smer.getY());
 
         if (copyPole != null) {
-            vykresleni(GameBoard.getGraphicsContext2D(), copyPole);
+            vykresleni(GameBoard.getGraphicsContext2D(), copyPole, PlayBackground);
             AktualKosticka.setX(x);
             AktualKosticka.setY(y);
             return true;
@@ -248,6 +291,7 @@ public class GameController implements EventHandler<KeyEvent> {
              * Pokud je null, tak to znamena, ze se kostka nemuze pohnout smerem dolu a je nutne pridat do
              * spadlych kostek predchozi krok tj. kdy je kostka o jedna vyse
              */
+
             hraciPole = ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, 0, 0);
             AktualKosticka = NasledujuKosticka;
             NasledujuKosticka = nahodnaKosticka();
@@ -256,9 +300,9 @@ public class GameController implements EventHandler<KeyEvent> {
 
     }
 
-    public void vykresleni(GraphicsContext gc, Kosticka[][] hraciPole) {
+    public void vykresleni(GraphicsContext gc, Kosticka[][] hraciPole,Image image) {
         gc.clearRect(0, 0, GameBoard.getWidth(), GameBoard.getHeight());    // Smazat vykreslene obrazky z predchoziho tiku
-        gc.drawImage(PlayBackground,0,0);
+        gc.drawImage(image,0,0);
 
         for (int radek = 0; radek<hraciPole.length; radek++) {
             for (int sloupec = 0; sloupec<hraciPole[0].length; sloupec++) {
@@ -270,12 +314,35 @@ public class GameController implements EventHandler<KeyEvent> {
 
     }
 
-    public void nasobeniMatic(int[][] pole1, int[][] pole2) {
+    public int[][] nasobeniMatic(int[][] pole1, int[][] pole2) {
         int[][] novaMatice = new int[pole1.length][pole2[0].length];
+        int j = 0;
         for (int radekNovaMatice = 0; radekNovaMatice<novaMatice.length; radekNovaMatice++) {
             for (int sloupecNovaMatice = 0; sloupecNovaMatice<novaMatice[0].length; sloupecNovaMatice++) {
-
+                for (int i = 0; i<pole1[0].length; i++) {
+                    j = j + pole1[radekNovaMatice][i]*pole2[i][sloupecNovaMatice];
+                }
+                novaMatice[radekNovaMatice][sloupecNovaMatice] = j;
+                j = 0;
             }
         }
+        return novaMatice;
+    }
+
+    public void rotace(Tvar Aktual, int[][] Rotace) {
+        int[][] otoceni = nasobeniMatic(Rotace,Aktual.getBody());
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i<otoceni[0].length; i++) {
+            if (otoceni[0][i]<min) {
+                min = otoceni[0][i];
+            }
+        }
+        min = Math.abs(min);
+        for (int i = 0; i<otoceni[0].length; i++) {
+            otoceni[0][i] = otoceni[0][i] + min;
+        }
+        Kosticka[][] tmp = Aktual.createTvar(otoceni);
+        AktualKosticka.setTvar(tmp);
+        posun(Smer.NIC);
     }
 }

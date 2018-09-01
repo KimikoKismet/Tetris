@@ -15,4 +15,8 @@ public class Constants {
     public static final int POCATECNI_SOURADNICE = -1;
 
     public static final int SCORE_UMAZANI_RADKU = 100;
+    public static final int[][] ULTIMATE_MATICE = new int[][] {
+        {0,-1},
+        {1,0}
+    };
 }

@@ -9,7 +9,8 @@ package sample;
 public enum Smer {
     DOLU(0, 1),
     DOLEVA(-1, 0),
-    DOPRAVA(1, 0);
+    DOPRAVA(1, 0),
+    NIC(0,0);
 
     private int x;
     private int y;

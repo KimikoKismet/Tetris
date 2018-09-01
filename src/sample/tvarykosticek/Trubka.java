@@ -11,11 +11,12 @@ import sample.Kosticka;
  */
 public class Trubka extends Tvar {
     public Trubka(Image image) {
+        super(image); //zavola konstruktor predka
         this.tvar = new Kosticka[][] {
-                {new Kosticka(image)},
-                {new Kosticka(image)},
-                {new Kosticka(image)},
-                {new Kosticka(image)}
+                {new Kosticka(image),null,null,null},
+                {new Kosticka(image),null,null,null},
+                {new Kosticka(image),null,null,null},
+                {new Kosticka(image),null,null,null}
         };
 
     }

@@ -1,5 +1,6 @@
 package sample.tvarykosticek;
 
+import javafx.scene.image.Image;
 import sample.Constants;
 import sample.Kosticka;
 
@@ -14,9 +15,15 @@ public abstract class Tvar {
     protected int x = Constants.HRA_POCET_SLOUPCU / 2;
     protected int y = Constants.POCATECNI_SOURADNICE;
 
+    public Tvar(Image image) {
+        this.image = image;
+    }
+
     public Kosticka[][] getTvar() {
         return tvar;
     }
+
+    protected Image image;
 
     public void setTvar(Kosticka[][] tvar) {
         this.tvar = tvar;
@@ -26,7 +33,7 @@ public abstract class Tvar {
         int[][] souradnice = new int[2][4];
         int k = 0;
         Kosticka[][] kostka = getTvar();
-        for (int j = 0; j<kostka.length; j++) {
+        for (int j = 0; j<kostka[0].length; j++) {
             for (int i = 0; i<kostka.length; i++) {
                 Kosticka bod = kostka[i][j];
                 if (bod != null) {
@@ -37,6 +44,14 @@ public abstract class Tvar {
             }
         }
         return souradnice;
+    }
+
+    public Kosticka[][] createTvar(int[][] souradnice) {
+        Kosticka[][] tvar = new Kosticka[4][4];      //TODO 4 = konstanta
+        for (int sloupec = 0; sloupec < souradnice[0].length; sloupec++) {
+            tvar[souradnice[0][sloupec]][souradnice[1][sloupec]] = new Kosticka(image);
+        }
+        return tvar;
     }
 
     public int getX() {

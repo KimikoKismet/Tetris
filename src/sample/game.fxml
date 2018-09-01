@@ -15,7 +15,7 @@
             <Font size="23.0" />
          </font>
       </Label>
-      <Canvas fx:id="Kosticka" height="100.0" layoutX="43.0" layoutY="114.0" width="100.0" />
+      <Canvas fx:id="Kosticka" height="130.0" layoutX="43.0" layoutY="110.0" width="130.0" />
       <Label fx:id="ScoreLabel" layoutX="43.0" layoutY="70.0">
          <font>
             <Font size="21.0" />
