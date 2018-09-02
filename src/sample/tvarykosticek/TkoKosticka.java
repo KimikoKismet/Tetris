@@ -13,10 +13,10 @@ public class TkoKosticka extends Tvar {
     public TkoKosticka(Image image) {
         super(image); //zavola konstruktor predka
         this.tvar = new Kosticka[][] {
+                {null,null,null,null},
+                {null,null,null,null},
                 {null,new Kosticka(image),null,null},
                 {new Kosticka(image),new Kosticka(image),new Kosticka(image),null},
-                {null,null,null,null},
-                {null,null,null,null},
         };
     }
 }

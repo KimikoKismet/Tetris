@@ -13,10 +13,10 @@ public class ZkoMirror extends Tvar {
     public ZkoMirror (Image image) {
         super(image); //zavola konstruktor predka
         this.tvar = new Kosticka[][] {
+                {null,null,null,null},
+                {null,null,null,null},
                 {null,new Kosticka(image),new Kosticka(image),null},
                 {new Kosticka(image),new Kosticka(image),null,null},
-                {null,null,null,null},
-                {null,null,null,null},
         };
 
     }

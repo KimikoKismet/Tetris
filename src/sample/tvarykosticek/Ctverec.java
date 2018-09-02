@@ -14,10 +14,10 @@ public class Ctverec extends Tvar {
     public Ctverec(Image image) {
         super(image); //zavola konstruktor predka
         this.tvar = new Kosticka[][] {
-                {new Kosticka(image),new Kosticka(image),null,null},
-                {new Kosticka(image),new Kosticka(image),null,null},
                 {null,null,null,null},
                 {null,null,null,null},
+                {new Kosticka(image),new Kosticka(image),null,null},
+                {new Kosticka(image),new Kosticka(image),null,null},
         };
 
     }
