@@ -10,12 +10,22 @@ import javafx.beans.property.SimpleStringProperty;
  * Time: 12:16
  */
 public class HighScoreItem {
+    private SimpleStringProperty Poradi;
     private SimpleStringProperty JmenoHrace;
     private SimpleIntegerProperty HighScore;
 
     public HighScoreItem(String jmenoHrace, int highScore) {
         JmenoHrace = new SimpleStringProperty(jmenoHrace);
         HighScore = new SimpleIntegerProperty(highScore);
+        Poradi = new SimpleStringProperty("0");
+    }
+
+    public String getPoradi() {
+        return Poradi.get();
+    }
+
+    public void setPoradi(String poradi) {
+        this.Poradi.set(poradi);
     }
 
     public String getJmenoHrace() {

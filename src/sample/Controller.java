@@ -22,7 +22,7 @@ public class Controller {
     public Image Multiplayer;
     public Image Highscores;
     public Image Exit;
-    public int pocethracu;
+    public static int pocethracu;
     public ImageView OptionsButton;
 
 
@@ -50,29 +50,31 @@ public class Controller {
     }
 
     public void singleplayerButtonAction() throws Exception {
+        pocethracu = 1;
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game.fxml"));
         Parent root = fxmlLoader.load();
 
         Main.stage.setScene(new Scene(root, 600, 800));                         //vytvoření scény a nastavení zobrazení
         Main.stage.show();                                                                    //zobrazí připravenou scénu
-        pocethracu = 1;
 
         Main.stage.getScene().setOnKeyPressed(fxmlLoader.<GameController>getController());
     }
 
     public void MultiplayerButtonAction() throws Exception {
+        pocethracu = 2;
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game.fxml"));
         Parent root = fxmlLoader.load();
 
         Main.stage.setScene(new Scene(root, 600, 800));                         //vytvoření scény a nastavení zobrazení
         Main.stage.show();                                                                    //zobrazí připravenou scénu
-        pocethracu = 2;
 
         Main.stage.getScene().setOnKeyPressed(fxmlLoader.<GameController>getController());                  //TODO pridani poctu hracu do kontroleru
     }
 
     public void HighScoresButtonAction() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("score.fxml"));    //načtení popisu scény
+        Parent root = FXMLLoader.load(getClass().getResource("score1.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();
     }

@@ -3,6 +3,7 @@ package sample;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -42,6 +43,7 @@ public class GameController implements EventHandler<KeyEvent> {
     public Image Back;
     public static Image PlayBackground;
     public ImageView ram;
+    public ImageView HowToPlay;
     private Map<KostickaEnum, Image> kostickyImages;
     private Tvar AktualKosticka;
     private Tvar NasledujuKosticka;
@@ -86,6 +88,38 @@ public class GameController implements EventHandler<KeyEvent> {
             default:
                 // nop
         }
+        if (Controller.pocethracu == 2) {
+            switch (event.getCode()) {
+                case DIGIT1:
+                    NasledujuKosticka = new Ctverec(nahodnaBarva());
+                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    break;
+                case DIGIT2:
+                    NasledujuKosticka = new LkoMirror(nahodnaBarva());
+                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    break;
+                case DIGIT3:
+                    NasledujuKosticka = new LkoNormal(nahodnaBarva());
+                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    break;
+                case DIGIT4:
+                    NasledujuKosticka = new TkoKosticka(nahodnaBarva());
+                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    break;
+                case DIGIT5:
+                    NasledujuKosticka = new Trubka(nahodnaBarva());
+                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    break;
+                case DIGIT6:
+                    NasledujuKosticka = new ZkoMirror(nahodnaBarva());
+                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    break;
+                case DIGIT7:
+                    NasledujuKosticka = new ZkoNormal(nahodnaBarva());
+                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    break;
+            }
+        }
     }
 
     @FXML
@@ -97,6 +131,7 @@ public class GameController implements EventHandler<KeyEvent> {
         Pain.setBackground(background);
         score = 0;
         ScoreLabel.setText(score+"");
+
 
         Back = new Image(Controller.class.getResource("BackButton.png").toExternalForm());
         BackButton.setImage(Back);
@@ -118,7 +153,10 @@ public class GameController implements EventHandler<KeyEvent> {
         kostickyImages.put(KostickaEnum.LKO,nactiObrazek("LkoKosticka.png"));
         kostickyImages.put(KostickaEnum.ZKO,nactiObrazek("ZkoKosticka.png"));
 
-
+        if (Controller.pocethracu == 1) {
+            Image Singleplayer = new Image(Controller.class.getResource("HowToPlay.png").toExternalForm());
+            HowToPlay.setImage(Singleplayer);
+        }
 
         GameInit();
 
@@ -150,22 +188,28 @@ public class GameController implements EventHandler<KeyEvent> {
         int randomindex = random.nextInt(POCET_KOSTICEK);
         switch (randomindex) {
             case 0:
-                return new Ctverec(kostickyImages.get(KostickaEnum.CTVEREC));
+                return new Ctverec(nahodnaBarva());
             case 1:
-                return new LkoMirror(kostickyImages.get(KostickaEnum.LKO));
+                return new LkoMirror(nahodnaBarva());
             case 2:
-                return new LkoNormal(kostickyImages.get(KostickaEnum.LKO));
+                return new LkoNormal(nahodnaBarva());
             case 3:
-                return new TkoKosticka(kostickyImages.get(KostickaEnum.TKO));
+                return new TkoKosticka(nahodnaBarva());
             case 4:
-                return new Trubka(kostickyImages.get(KostickaEnum.TRUBKA));
+                return new Trubka(nahodnaBarva());
             case 5:
-                return new ZkoMirror(kostickyImages.get(KostickaEnum.ZKO));
+                return new ZkoMirror(nahodnaBarva());
             case 6:
-                return new ZkoNormal(kostickyImages.get(KostickaEnum.ZKO));
+                return new ZkoNormal(nahodnaBarva());
             default:
-                return new ZkoNormal(kostickyImages.get(KostickaEnum.ZKO));
+                return new ZkoNormal(nahodnaBarva());
         }
+    }
+
+    private Image nahodnaBarva() {
+        Random random = new Random();
+        int randomindex = random.nextInt(POCET_BAREV);
+        return kostickyImages.get(KostickaEnum.values()[randomindex]);
     }
 
     public void GameInit() {
@@ -185,7 +229,7 @@ public class GameController implements EventHandler<KeyEvent> {
         }
         posun(Smer.DOLU);
 
-        vykresleni(Kosticka.getGraphicsContext2D(),NasledujuKosticka.getTvar(),NasledujiciKosticka);
+        vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
 
         int scoreCounter = 0;
         for (int radek = 0; radek<hraciPole.length; radek++) {
@@ -226,10 +270,7 @@ public class GameController implements EventHandler<KeyEvent> {
 
     public boolean kontrolaGameOver() {
         for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
-            if (hraciPole[0][sloupec] != null) {
-                return true;
-            }
-            if (ArrayUtils.vlozeniKosticky(AktualKosticka,hraciPole,0,0) == null) {
+            if (hraciPole[4][sloupec] != null) {
                 return true;
             }
         }
@@ -239,22 +280,37 @@ public class GameController implements EventHandler<KeyEvent> {
     public void GameOver() {
         timeline.stop();
 
-        String Name;
+        // Priprava dialogu pro zadani jmena
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle("Game Over");
         dialog.setHeaderText("GAME OVER. Do you want to save your score");
         dialog.setContentText("Please enter your name loser:");
 
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()){
-            if (result.get().length()<3) {
-                Name = "N00b.";
+        /*
+         * Nezarucena informace -- takhle to fungvalo ve starsi knihovne pro GUI -- Swing.
+         *
+         * Obsluha udalosti (mys, klavesnice, tlacitka) probiha v GUI servisnim vlakne a stejne tak
+         * zobrazeni formularu a diaogu.
+         *
+         * Tady herni smycka je obsluhovana timerem, ktery vytvari svoje vlastni vlakno.
+         *
+         * Kdyz se pokusim zavolat dialog.showAndWait() z vlakna timeru, tak vypadne vyjimka
+         * "java.lang.IllegalStateException: showAndWait is not allowed during animation or layout processing"
+         *
+         * --> Vyresi se to tak, ze zobrazeni dialogu se bude delegovat na GUI vlakno pomoci Platform.runLater.
+         */
+
+        // Zobrazeni dialogu pro zadani jmena
+        Platform.runLater(() -> {
+            String name;
+            Optional<String> result = dialog.showAndWait();
+
+            if (result.isPresent()) {
+                name = result.get().length() < 3 ? "N00b." : result.get();
+                Score tmp = new Score("HighScore.txt");
+                tmp.SaveHighScore(score,name);
             }
-            else {
-                Name = result.get();
-            }
-            System.out.println(Name);
-        }
+        });
     }
 
     public void posunZbytekDolu(int prazdnyRadek) {
@@ -264,7 +320,7 @@ public class GameController implements EventHandler<KeyEvent> {
                 copy[radek+1][sloupec] = hraciPole[radek][sloupec];
             }
         }
-        vykresleni(GameBoard.getGraphicsContext2D(), copy, PlayBackground);
+        vykresleni(GameBoard, copy, PlayBackground,HRA_POCET_VIDITELNYCH_RADKU);
         hraciPole = copy;
     }
 
@@ -279,39 +335,56 @@ public class GameController implements EventHandler<KeyEvent> {
         int y = AktualKosticka.getY() + smer.getY();
 
         // Vytvoreni kopie hraciho pole s vlozenou kostickou s posunem dle smeru
-        Kosticka[][] copyPole = ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, smer.getX(), smer.getY());
+        Kosticka[][] copyPole = ArrayUtils.copy(hraciPole);
+        boolean status = ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, copyPole, smer.getX(), smer.getY());
 
-        if (copyPole != null) {
-            vykresleni(GameBoard.getGraphicsContext2D(), copyPole, PlayBackground);
+        if (status) {
+            vykresleni(GameBoard, copyPole, PlayBackground, HRA_POCET_VIDITELNYCH_RADKU);
             AktualKosticka.setX(x);
             AktualKosticka.setY(y);
             return true;
         } else {
-            /*
-             * Pokud je null, tak to znamena, ze se kostka nemuze pohnout smerem dolu a je nutne pridat do
-             * spadlych kostek predchozi krok tj. kdy je kostka o jedna vyse
-             */
-
-            hraciPole = ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, 0, 0);
+            copyPole = ArrayUtils.copy(hraciPole);
+                /*
+                 * Pokud je null, tak to znamena, ze se kostka nemuze pohnout smerem dolu a je nutne pridat do
+                 * spadlych kostek predchozi krok tj. kdy je kostka o jedna vyse
+                 */
+            ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, copyPole, 0, 0);
+            hraciPole = copyPole;
             AktualKosticka = NasledujuKosticka;
             NasledujuKosticka = nahodnaKosticka();
+
             return false;
         }
-
     }
 
-    public void vykresleni(GraphicsContext gc, Kosticka[][] hraciPole,Image image) {
-        gc.clearRect(0, 0, GameBoard.getWidth(), GameBoard.getHeight());    // Smazat vykreslene obrazky z predchoziho tiku
-        gc.drawImage(image,0,0);
+    public void vykresleni(Canvas canvas, Kosticka[][] hraciPole, Image pozadi) {
+        vykresleni(canvas, hraciPole, pozadi, hraciPole.length);
+    }
 
-        for (int radek = 0; radek<hraciPole.length; radek++) {
-            for (int sloupec = 0; sloupec<hraciPole[0].length; sloupec++) {
-                if (hraciPole[radek][sloupec] != null) {
-                    gc.drawImage(hraciPole[radek][sloupec].getKosticka(),sloupec*KOSTICKA_SIZE,radek*KOSTICKA_SIZE);
+    public void vykresleni(Canvas canvas, Kosticka[][] hraciPole, Image pozadi, int pocetViditelnychRadku) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // Smazat vykreslene obrazky z predchoziho tiku
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.drawImage(pozadi,0,0);
+
+        // offset od kdy zacit vykreslovat (prvni radky jsou neviditelne)
+        int offset = hraciPole.length - pocetViditelnychRadku;
+
+        for (int radek = 0; radek < hraciPole.length - offset; radek++) {
+            for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
+
+                if (hraciPole[radek + offset][sloupec] != null) {
+                    gc.drawImage(
+                            hraciPole[radek + offset][sloupec].getKosticka(),
+                            sloupec * KOSTICKA_SIZE,
+                            radek * KOSTICKA_SIZE
+                    );
                 }
             }
         }
-
     }
 
     public int[][] nasobeniMatic(int[][] pole1, int[][] pole2) {

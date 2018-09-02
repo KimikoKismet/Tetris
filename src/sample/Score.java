@@ -18,6 +18,7 @@ public class Score {
         this.nazevSouboru = nazevSouboru;
     }
 
+
     public void SaveHighScore(int HighScore, String JmenoHrace) {
         FileWriter fw;                                                      //FileWriter je trida, ktera umoznuje zapis dat do textoveho souboru
         try{                                                                //try-catch blok pro odchytavani vyjimek v programu. Zde v kodu muze vyjimku vyhodit FileWriter

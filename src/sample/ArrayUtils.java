@@ -19,19 +19,17 @@ public class ArrayUtils {
         return copy;
     }
 
-    public static Kosticka[][] vlozeniKosticky(Tvar kostka, Kosticka src[][], int offsetX, int offsetY) {
+    public static boolean vlozeniKosticky(Tvar kostka, Kosticka src[][], Kosticka[][] dest, int offsetX, int offsetY) {
 
         int x = kostka.getX() + offsetX;
         int y = kostka.getY() + offsetY;
 
-        Kosticka[][] tmp = ArrayUtils.copy(src);
+        boolean status = true;
 
-        int kontrola = 0;
-
-        for (int radek = 0; radek < kostka.getTvar().length; radek++) {
+        loop: for (int radek = 0; radek < kostka.getTvar().length; radek++) {
             for (int sloupec = 0; sloupec < kostka.getTvar()[radek].length; sloupec++) {
 
-                if (kostka.getTvar()[radek][sloupec] == null) {
+                if (kostka.getTvar()[radek][sloupec] == null) {     // kontrola zda ma kostka na danem miste kosticku
                     /*
                      * Aby se kostka nezasekla prazdnym mistem, tak jej ignorovat.
                      * [.][.]
@@ -46,17 +44,19 @@ public class ArrayUtils {
                 }
 
                 if (radek + y == src.length) {
-                    kontrola = 1;
+                    status = false;
+                    break loop;
                 }
-                else if (src[radek + y][sloupec + x] != null) {
-                    kontrola = 1;
-                }
-                else if (src[radek+y][sloupec+x] == null) {
-                    tmp[radek + y][sloupec + x] = kostka.getTvar()[radek][sloupec];
+
+                if (src[radek + y][sloupec + x] == null) {
+                    dest[radek + y][sloupec + x] = kostka.getTvar()[radek][sloupec];
+                } else {
+                    status = false;
+                    break loop;
                 }
             }
         }
 
-        return kontrola == 0 ? tmp : null;
+        return status;
     }
 }

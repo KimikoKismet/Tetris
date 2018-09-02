@@ -31,6 +31,7 @@ public class ScoreController {
     public TableView Table;
     public TableColumn Players;
     public TableColumn Scores;
+    public TableColumn Places;
 
     @FXML
     public void initialize() {
@@ -45,6 +46,7 @@ public class ScoreController {
         Score score = new Score("HighScore.txt");
         scores = score.prohlizeni();
         List list = new ArrayList();
+        Places.setCellValueFactory(new PropertyValueFactory("Poradi"));
         Players.setCellValueFactory(new PropertyValueFactory("JmenoHrace"));
         Scores.setCellValueFactory(new PropertyValueFactory("HighScore"));
         for (String radek : scores) {
@@ -57,6 +59,9 @@ public class ScoreController {
                 {
                    return item2.getHighScore()-item1.getHighScore();
                 });
+        for (int i = 0; i < sortedlist.size(); i++) {
+            sortedlist.get(i).setPoradi((i+1)+".");
+        }
         Table.setItems(sortedlist);
         //Table.getSortOrder().add(Scores);
     }

@@ -1,2 +1,5 @@
 FengLee: 5000
 Pyjoneer: 10000
+FengLee: 184
+Kimiko: 210
+N00b.: 210
