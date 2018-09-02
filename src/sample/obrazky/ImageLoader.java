@@ -1,0 +1,21 @@
+package sample.obrazky;
+
+import javafx.scene.image.Image;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: Kimiko
+ * Date: 2. 9. 2018
+ * Time: 17:08
+ */
+public class ImageLoader {
+    public static Image LoadImage(String nazevSouboru) {
+        Image image = new Image(ImageLoader.class.getResource(nazevSouboru).toExternalForm());
+        return image;
+    }
+
+    public static Image LoadImage(String nazevSouboru, int width, int height) {
+        Image image = new Image(ImageLoader.class.getResource(nazevSouboru).toExternalForm(),width,height,true,false);
+        return image;
+    }
+}

@@ -2,7 +2,7 @@ package sample.tvarykosticek;
 
 import javafx.scene.image.Image;
 import sample.Constants;
-import sample.Kosticka;
+import sample.game.Kosticka;
 
 /**
  * Created by IntelliJ IDEA.
