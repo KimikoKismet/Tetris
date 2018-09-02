@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static sample.Constants.*;
+import static sample.GameUtils.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,49 +36,160 @@ import static sample.Constants.*;
  */
 public class GameController implements EventHandler<KeyEvent> {
 
-    public Canvas GameBoard;
-    public Canvas Kosticka;
-    public Label ScoreLabel;
-    public AnchorPane Pain;
-    public ImageView BackButton;
-    public Image Back;
-    public static Image PlayBackground;
-    public ImageView ram;
-    public ImageView HowToPlay;
+    public Canvas gameBoard;
+    private Image playBackground;
+
+    public Canvas kosticka;
+    private Image nasledujiciKostickaBackground;
+
+    public Label scoreLabel;
+
+    public AnchorPane container;
+
+    public ImageView backButton;
+    private Image back;
+
+    public ImageView ramecek;
+
+    public ImageView howToPlay;
+
     private Map<KostickaEnum, Image> kostickyImages;
-    private Tvar AktualKosticka;
-    private Tvar NasledujuKosticka;
+
+    private Tvar aktualKosticka;
+    private Tvar nasledujuKosticka;
     private Kosticka[][] hraciPole;
+
     private Timeline timeline;
+
     private int score;
-    private Image NasledujiciKosticka;
-    private Kosticka[][] NasledujiciKostickaPole;
+
+
+    @FXML
+    public void initialize() throws Exception {
+        Image image = new Image(Controller.class.getResource("TetrisBackground.png").toExternalForm());
+        BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
+        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        Background background = new Background(backgroundImage);
+        container.setBackground(background);
+
+        score = 0;
+        scoreLabel.setText(score+"");
+
+        back = new Image(Controller.class.getResource("backButton.png").toExternalForm());
+        backButton.setImage(back);
+
+        playBackground = new Image(Controller.class.getResource("Pole.png").toExternalForm());
+        GraphicsContext gc = gameBoard.getGraphicsContext2D();
+        gc.drawImage(playBackground,0,0);                   //vykresleni hraciho pozadi
+
+        ramecek.setImage(new Image(Controller.class.getResource("Okrajpole.png").toExternalForm()));
+
+        nasledujiciKostickaBackground = new Image(Controller.class.getResource("NasledujiciKosticka.png").toExternalForm());
+        GraphicsContext gc2 = kosticka.getGraphicsContext2D();
+        gc2.drawImage(nasledujiciKostickaBackground,0,0);                                                               //vykresleni hraciho pozadi
+
+        kostickyImages = new HashMap<>(KostickaEnum.values().length);
+        kostickyImages.put(KostickaEnum.CTVEREC, nactiObrazek("CtverecKosticka.png"));
+        kostickyImages.put(KostickaEnum.TRUBKA, nactiObrazek("TrubkaKosticka.png"));
+        kostickyImages.put(KostickaEnum.TKO, nactiObrazek("TkoKosticka.png"));
+        kostickyImages.put(KostickaEnum.LKO, nactiObrazek("LkoKosticka.png"));
+        kostickyImages.put(KostickaEnum.ZKO, nactiObrazek("ZkoKosticka.png"));
+
+        if (Controller.pocethracu == 1) {
+            Image Singleplayer = new Image(Controller.class.getResource("howToPlay.png").toExternalForm());
+            howToPlay.setImage(Singleplayer);
+        }
+        // TODO pocet hracu 2
+
+        GameInit();
+    }
+
+    public void GameInit() {
+        aktualKosticka = nahodnaKosticka(kostickyImages);
+        nasledujuKosticka = nahodnaKosticka(kostickyImages);
+        hraciPole = new Kosticka[HRA_POCET_RADKU][HRA_POCET_SLOUPCU];
+
+        timeline = new Timeline(new KeyFrame(Duration.millis(POCATECNI_RYCHLOST),          //vytvoreni TIMERU
+                ae -> gameLoop()));                                                                 //ae = Action Event
+        timeline.setCycleCount(Animation.INDEFINITE);   //wutever
+        timeline.play();
+    }
+
+    public void gameLoop() {
+        if (kontrolaGameOver(hraciPole)) {
+            GameOver();
+        }
+
+        posun(Smer.DOLU);
+
+        vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
+
+        int scoreCounter = 0;
+        for (int radek = 0; radek < hraciPole.length; radek++) {
+            boolean kontrola = true;
+            for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
+                if (hraciPole[radek][sloupec] == null) {
+                    kontrola = false;
+                    break;
+                }
+            }
+            if (kontrola) {
+                umazRadek(radek, hraciPole);
+                hraciPole = posunZbytekDolu(radek,hraciPole);
+                vykresleni(gameBoard, hraciPole, playBackground,HRA_POCET_VIDITELNYCH_RADKU);
+
+                scoreCounter++;
+            }
+        }
+
+        switch (scoreCounter) {
+            case 1:
+                score = score + SCORE_UMAZANI_RADKU;
+                break;
+            case 2:
+                score = score + SCORE_UMAZANI_RADKU * 3;
+                break;
+            case 3:
+                score = score + SCORE_UMAZANI_RADKU * 5;
+                break;
+            default:
+                //nop
+        }
+
+        scoreLabel.setText(score+"");
+    }
 
     public void backButtonAction() throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("menu.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();
+
         timeline.stop();
+    }
+
+    public void backClickButton() {
+        Image SinglePlayerclick = new Image(Controller.class.getResource("backClickButton.png").toExternalForm());
+        backButton.setImage(SinglePlayerclick);
+    }
+
+    public void backReleaseButton() {
+        backButton.setImage(back);
     }
 
     @Override
     public void handle(KeyEvent event) {
         switch (event.getCode()) {
             case UP:
-                System.out.println("Rotovat kostku");
-                rotace(AktualKosticka,ULTIMATE_MATICE);// TODO rota
+                rotace(aktualKosticka);
                 break;
             case DOWN:
-                System.out.println("Rychleji dolu");
                 posun(Smer.DOLU);
                 score = score + 1;
                 break;
             case LEFT:
-                System.out.println("Doleva");
                 posun(Smer.DOLEVA);
                 break;
             case RIGHT:
-                System.out.println("Doprava");
                 posun(Smer.DOPRAVA);
                 break;
             case SPACE:
@@ -89,87 +201,146 @@ public class GameController implements EventHandler<KeyEvent> {
                 // nop
         }
         if (Controller.pocethracu == 2) {
+            Image nahodnaBarva = nahodnaBarva(kostickyImages);
             switch (event.getCode()) {
                 case DIGIT1:
-                    NasledujuKosticka = new Ctverec(nahodnaBarva());
-                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    nasledujuKosticka = new Ctverec(nahodnaBarva);
+                    vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT2:
-                    NasledujuKosticka = new LkoMirror(nahodnaBarva());
-                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    nasledujuKosticka = new LkoMirror(nahodnaBarva);
+                    vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT3:
-                    NasledujuKosticka = new LkoNormal(nahodnaBarva());
-                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    nasledujuKosticka = new LkoNormal(nahodnaBarva);
+                    vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT4:
-                    NasledujuKosticka = new TkoKosticka(nahodnaBarva());
-                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    nasledujuKosticka = new TkoKosticka(nahodnaBarva);
+                    vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT5:
-                    NasledujuKosticka = new Trubka(nahodnaBarva());
-                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    nasledujuKosticka = new Trubka(nahodnaBarva);
+                    vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT6:
-                    NasledujuKosticka = new ZkoMirror(nahodnaBarva());
-                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    nasledujuKosticka = new ZkoMirror(nahodnaBarva);
+                    vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT7:
-                    NasledujuKosticka = new ZkoNormal(nahodnaBarva());
-                    vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
+                    nasledujuKosticka = new ZkoNormal(nahodnaBarva);
+                    vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
             }
         }
     }
 
-    @FXML
-    public void initialize() throws Exception {
-        Image image = new Image(Controller.class.getResource("TetrisBackground.png").toExternalForm());
-        BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
-        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-        Background background = new Background(backgroundImage);
-        Pain.setBackground(background);
-        score = 0;
-        ScoreLabel.setText(score+"");
+    /**
+     * posune kostku danym smerem
+     * @param smer smer, kterym sem a kostka posunout
+     * @return true pokud se posunuti povedlo,jinak false
+     */
+    public boolean posun(Smer smer) {
+        int x = aktualKosticka.getX() + smer.getX();
+        int y = aktualKosticka.getY() + smer.getY();
 
+        // Vytvoreni kopie hraciho pole s vlozenou kostickou s posunem dle smeru
+        Kosticka[][] copyPole = GameUtils.copy(hraciPole);
+        boolean status = GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, smer.getX(), smer.getY());
 
-        Back = new Image(Controller.class.getResource("BackButton.png").toExternalForm());
-        BackButton.setImage(Back);
+        if (status) {
+            vykresleni(gameBoard, copyPole, playBackground, HRA_POCET_VIDITELNYCH_RADKU);
+            aktualKosticka.setX(x);
+            aktualKosticka.setY(y);
+            return true;
+        } else {
+            copyPole = GameUtils.copy(hraciPole);
+                /*
+                 * Pokud je null, tak to znamena, ze se kostka nemuze pohnout smerem dolu a je nutne pridat do
+                 * spadlych kostek predchozi krok tj. kdy je kostka o jedna vyse
+                 */
+            GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, 0, 0);
+            hraciPole = copyPole;
+            aktualKosticka = nasledujuKosticka;
+            nasledujuKosticka = nahodnaKosticka(kostickyImages);
 
-        //Trubka trubka = new Trubka(Controller.class.getResource("TrubkaKosticka.png").toExternalForm());
-        PlayBackground = new Image(Controller.class.getResource("Pole.png").toExternalForm());
-        GraphicsContext gc = GameBoard.getGraphicsContext2D();
-        gc.drawImage(PlayBackground,0,0);                                                               //vykresleni hraciho pozadi
-        Image Ram = new Image(Controller.class.getResource("Okrajpole.png").toExternalForm());
-        ram.setImage(Ram);
-        NasledujiciKosticka = new Image(Controller.class.getResource("NasledujiciKosticka.png").toExternalForm());
-        GraphicsContext gc2 = Kosticka.getGraphicsContext2D();
-        gc2.drawImage(NasledujiciKosticka,0,0);                                                               //vykresleni hraciho pozadi
+            return false;
+        }
+    }
 
-        kostickyImages = new HashMap<>(KostickaEnum.values().length);
-        kostickyImages.put(KostickaEnum.CTVEREC,nactiObrazek("CtverecKosticka.png"));
-        kostickyImages.put(KostickaEnum.TRUBKA,nactiObrazek("TrubkaKosticka.png"));
-        kostickyImages.put(KostickaEnum.TKO,nactiObrazek("TkoKosticka.png"));
-        kostickyImages.put(KostickaEnum.LKO,nactiObrazek("LkoKosticka.png"));
-        kostickyImages.put(KostickaEnum.ZKO,nactiObrazek("ZkoKosticka.png"));
+    /**
+     * Otoci kostku o uhel dany matici {@link Constants#ULTIMATE_MATICE}.
+     * @param aktual tvar k otoceni
+     */
+    public void rotace(Tvar aktual) {
 
-        if (Controller.pocethracu == 1) {
-            Image Singleplayer = new Image(Controller.class.getResource("HowToPlay.png").toExternalForm());
-            HowToPlay.setImage(Singleplayer);
+        // Otoceni
+        int[][] otoceni = nasobeniMatic(ULTIMATE_MATICE, aktual.getBody());
+
+        /*
+         * Pri otoceni muze dojit k presunu do jineho kvadrantu (- souradnice x nebo y), takze je potreba otocenou
+         * kostku dat zpet.
+         */
+        int min = Integer.MAX_VALUE;
+
+        for (int i = 0; i < otoceni[0].length; i++) {
+            if (otoceni[0][i] < min) {
+                min = otoceni[0][i];
+            }
         }
 
-        GameInit();
+        min = Math.abs(min);
 
+        for (int i = 0; i < otoceni[0].length; i++) {
+            otoceni[0][i] = otoceni[0][i] + min;
+        }
 
+        Kosticka[][] tmp = aktual.createTvar(otoceni);
+
+        aktualKosticka.setTvar(tmp);
+
+        posun(Smer.NIC);
     }
 
-    public void BackClickButton() {
-        Image SinglePlayerclick = new Image(Controller.class.getResource("BackClickButton.png").toExternalForm());
-        BackButton.setImage(SinglePlayerclick);
+    /**
+     * vykresli pole a image do Canvasu
+     * @param canvas
+     * @param hraciPole
+     * @param pozadi
+     */
+    public void vykresleni(Canvas canvas, Kosticka[][] hraciPole, Image pozadi) {
+        vykresleni(canvas, hraciPole, pozadi, hraciPole.length);
     }
 
-    public void BackReleaseButton() {
-        BackButton.setImage(Back);
+    /**
+     * vykresli pole a image do Canvasu
+     * @param canvas
+     * @param hraciPole
+     * @param pozadi
+     */
+    public void vykresleni(Canvas canvas, Kosticka[][] hraciPole, Image pozadi, int pocetViditelnychRadku) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // Smazat vykreslene obrazky z predchoziho tiku
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.drawImage(pozadi,0,0);
+
+        // offset od kdy zacit vykreslovat (prvni radky jsou neviditelne)
+        int offset = hraciPole.length - pocetViditelnychRadku;
+
+        for (int radek = 0; radek < hraciPole.length - offset; radek++) {
+            for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
+
+                if (hraciPole[radek + offset][sloupec] != null) {
+                    gc.drawImage(
+                            hraciPole[radek + offset][sloupec].getKosticka(),
+                            sloupec * KOSTICKA_SIZE,
+                            radek * KOSTICKA_SIZE
+                    );
+                }
+            }
+        }
     }
 
     private Image nactiObrazek(String nazev) {
@@ -181,100 +352,6 @@ public class GameController implements EventHandler<KeyEvent> {
                 false,
                 false
         );
-    }
-
-    private Tvar nahodnaKosticka() {
-        Random random = new Random();
-        int randomindex = random.nextInt(POCET_KOSTICEK);
-        switch (randomindex) {
-            case 0:
-                return new Ctverec(nahodnaBarva());
-            case 1:
-                return new LkoMirror(nahodnaBarva());
-            case 2:
-                return new LkoNormal(nahodnaBarva());
-            case 3:
-                return new TkoKosticka(nahodnaBarva());
-            case 4:
-                return new Trubka(nahodnaBarva());
-            case 5:
-                return new ZkoMirror(nahodnaBarva());
-            case 6:
-                return new ZkoNormal(nahodnaBarva());
-            default:
-                return new ZkoNormal(nahodnaBarva());
-        }
-    }
-
-    private Image nahodnaBarva() {
-        Random random = new Random();
-        int randomindex = random.nextInt(POCET_BAREV);
-        return kostickyImages.get(KostickaEnum.values()[randomindex]);
-    }
-
-    public void GameInit() {
-        AktualKosticka = nahodnaKosticka();
-        NasledujuKosticka = nahodnaKosticka();
-        hraciPole = new Kosticka[HRA_POCET_RADKU][HRA_POCET_SLOUPCU];
-
-        timeline = new Timeline(new KeyFrame(Duration.millis(POCATECNI_RYCHLOST),          //vytvoreni TIMERU
-                ae -> gameLoop()));                                                                 //ae = Action Event
-        timeline.setCycleCount(Animation.INDEFINITE);   //wutever
-        timeline.play();
-    }
-
-    public void gameLoop() {
-        if (kontrolaGameOver()) {
-            GameOver();
-        }
-        posun(Smer.DOLU);
-
-        vykresleni(Kosticka,NasledujuKosticka.getTvar(),NasledujiciKosticka);
-
-        int scoreCounter = 0;
-        for (int radek = 0; radek<hraciPole.length; radek++) {
-            boolean kontrola = true;
-            for (int sloupec = 0; sloupec<hraciPole[0].length; sloupec++) {
-                if (hraciPole[radek][sloupec] == null) {
-                    kontrola = false;
-                    break;
-                }
-            }
-            if (kontrola) {
-                umazRadek(radek);
-                posunZbytekDolu(radek);
-                scoreCounter++;
-                //score = score + SCORE_UMAZANI_RADKU;
-                //ScoreLabel.setText(score+"");
-
-            }
-        }
-        switch (scoreCounter) {
-            case 1:
-                score = score + SCORE_UMAZANI_RADKU;
-                break;
-            case 2:
-                score = score + SCORE_UMAZANI_RADKU*3;
-                break;
-            case 3:
-                score = score + SCORE_UMAZANI_RADKU*5;
-                break;
-            default:
-                //nop
-        }
-        ScoreLabel.setText(score+"");
-
-
-    }
-
-
-    public boolean kontrolaGameOver() {
-        for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
-            if (hraciPole[4][sloupec] != null) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void GameOver() {
@@ -311,111 +388,5 @@ public class GameController implements EventHandler<KeyEvent> {
                 tmp.SaveHighScore(score,name);
             }
         });
-    }
-
-    public void posunZbytekDolu(int prazdnyRadek) {
-        Kosticka[][] copy = ArrayUtils.copy(hraciPole);
-        for (int radek = prazdnyRadek-1; radek>0; radek--) {
-            for (int sloupec = 0; sloupec<hraciPole[0].length; sloupec++) {
-                copy[radek+1][sloupec] = hraciPole[radek][sloupec];
-            }
-        }
-        vykresleni(GameBoard, copy, PlayBackground,HRA_POCET_VIDITELNYCH_RADKU);
-        hraciPole = copy;
-    }
-
-    public void umazRadek(int radek) {
-        for (int sloupec = 0; sloupec<hraciPole[0].length; sloupec++) {
-            hraciPole[radek][sloupec] = null;
-        }
-    }
-
-    public boolean posun(Smer smer) {
-        int x = AktualKosticka.getX() + smer.getX();
-        int y = AktualKosticka.getY() + smer.getY();
-
-        // Vytvoreni kopie hraciho pole s vlozenou kostickou s posunem dle smeru
-        Kosticka[][] copyPole = ArrayUtils.copy(hraciPole);
-        boolean status = ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, copyPole, smer.getX(), smer.getY());
-
-        if (status) {
-            vykresleni(GameBoard, copyPole, PlayBackground, HRA_POCET_VIDITELNYCH_RADKU);
-            AktualKosticka.setX(x);
-            AktualKosticka.setY(y);
-            return true;
-        } else {
-            copyPole = ArrayUtils.copy(hraciPole);
-                /*
-                 * Pokud je null, tak to znamena, ze se kostka nemuze pohnout smerem dolu a je nutne pridat do
-                 * spadlych kostek predchozi krok tj. kdy je kostka o jedna vyse
-                 */
-            ArrayUtils.vlozeniKosticky(AktualKosticka, hraciPole, copyPole, 0, 0);
-            hraciPole = copyPole;
-            AktualKosticka = NasledujuKosticka;
-            NasledujuKosticka = nahodnaKosticka();
-
-            return false;
-        }
-    }
-
-    public void vykresleni(Canvas canvas, Kosticka[][] hraciPole, Image pozadi) {
-        vykresleni(canvas, hraciPole, pozadi, hraciPole.length);
-    }
-
-    public void vykresleni(Canvas canvas, Kosticka[][] hraciPole, Image pozadi, int pocetViditelnychRadku) {
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        // Smazat vykreslene obrazky z predchoziho tiku
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        gc.drawImage(pozadi,0,0);
-
-        // offset od kdy zacit vykreslovat (prvni radky jsou neviditelne)
-        int offset = hraciPole.length - pocetViditelnychRadku;
-
-        for (int radek = 0; radek < hraciPole.length - offset; radek++) {
-            for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
-
-                if (hraciPole[radek + offset][sloupec] != null) {
-                    gc.drawImage(
-                            hraciPole[radek + offset][sloupec].getKosticka(),
-                            sloupec * KOSTICKA_SIZE,
-                            radek * KOSTICKA_SIZE
-                    );
-                }
-            }
-        }
-    }
-
-    public int[][] nasobeniMatic(int[][] pole1, int[][] pole2) {
-        int[][] novaMatice = new int[pole1.length][pole2[0].length];
-        int j = 0;
-        for (int radekNovaMatice = 0; radekNovaMatice<novaMatice.length; radekNovaMatice++) {
-            for (int sloupecNovaMatice = 0; sloupecNovaMatice<novaMatice[0].length; sloupecNovaMatice++) {
-                for (int i = 0; i<pole1[0].length; i++) {
-                    j = j + pole1[radekNovaMatice][i]*pole2[i][sloupecNovaMatice];
-                }
-                novaMatice[radekNovaMatice][sloupecNovaMatice] = j;
-                j = 0;
-            }
-        }
-        return novaMatice;
-    }
-
-    public void rotace(Tvar Aktual, int[][] Rotace) {
-        int[][] otoceni = nasobeniMatic(Rotace,Aktual.getBody());
-        int min = Integer.MAX_VALUE;
-        for (int i = 0; i<otoceni[0].length; i++) {
-            if (otoceni[0][i]<min) {
-                min = otoceni[0][i];
-            }
-        }
-        min = Math.abs(min);
-        for (int i = 0; i<otoceni[0].length; i++) {
-            otoceni[0][i] = otoceni[0][i] + min;
-        }
-        Kosticka[][] tmp = Aktual.createTvar(otoceni);
-        AktualKosticka.setTvar(tmp);
-        posun(Smer.NIC);
     }
 }

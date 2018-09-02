@@ -25,7 +25,7 @@ public class OptionsController {
         Background background = new Background(backgroundImage);
         Pain.setBackground(background);
 
-        Back = new Image(Controller.class.getResource("BackButton.png").toExternalForm());
+        Back = new Image(Controller.class.getResource("backButton.png").toExternalForm());
         BackButton.setImage(Back);
     }
 
@@ -36,7 +36,7 @@ public class OptionsController {
     }
 
     public void BackClickButton() {
-        Image SinglePlayerclick = new Image(Controller.class.getResource("BackClickButton.png").toExternalForm());
+        Image SinglePlayerclick = new Image(Controller.class.getResource("backClickButton.png").toExternalForm());
         BackButton.setImage(SinglePlayerclick);
     }
 

@@ -40,7 +40,7 @@ public class ScoreController {
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
         Pain.setBackground(background);
-        Back = new Image(Controller.class.getResource("BackButton.png").toExternalForm());
+        Back = new Image(Controller.class.getResource("backButton.png").toExternalForm());
         BackButton.setImage(Back);
         ArrayList<String> scores;
         Score score = new Score("HighScore.txt");
@@ -73,7 +73,7 @@ public class ScoreController {
     }
 
     public void BackClickButton() {
-        Image SinglePlayerclick = new Image(Controller.class.getResource("BackClickButton.png").toExternalForm());
+        Image SinglePlayerclick = new Image(Controller.class.getResource("backClickButton.png").toExternalForm());
         BackButton.setImage(SinglePlayerclick);
     }
 
