@@ -10,13 +10,13 @@
 <AnchorPane fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.game.GameController">
    <children>
       <Canvas fx:id="gameBoard" height="600.0" layoutX="261.0" layoutY="36.0" width="300.0" AnchorPane.rightAnchor="35.0" />
-      <Label layoutX="43.0" layoutY="36.0" text="SCORE:" AnchorPane.leftAnchor="30.0">
+      <Label layoutX="43.0" layoutY="36.0" text="SCORE:" AnchorPane.leftAnchor="35.0">
          <font>
             <Font size="23.0" />
          </font>
       </Label>
       <Canvas fx:id="kosticka" height="120.0" layoutX="73.0" layoutY="107.0" width="90.0" />
-      <Label fx:id="scoreLabel" layoutX="43.0" layoutY="70.0" AnchorPane.leftAnchor="30.0">
+      <Label fx:id="scoreLabel" layoutX="43.0" layoutY="70.0" AnchorPane.leftAnchor="35.0">
          <font>
             <Font size="21.0" />
          </font>

@@ -2,6 +2,10 @@ package sample.obrazky;
 
 import javafx.scene.image.Image;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Kimiko
@@ -10,7 +14,7 @@ import javafx.scene.image.Image;
  */
 public class ImageLoader {
     public static Image LoadImage(String nazevSouboru) {
-        Image image = new Image(ImageLoader.class.getResource(nazevSouboru).toExternalForm());
+        Image image = new Image(ImageLoader.class.getResource(nazevSouboru).toString());
         return image;
     }
 

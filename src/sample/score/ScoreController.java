@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import sample.Main;
 import sample.menu.Controller;
+import sample.obrazky.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +37,12 @@ public class ScoreController {
 
     @FXML
     public void initialize() {
-        Image image = new Image(Controller.class.getResource("TetrisBackground.png").toExternalForm());
+        Image image = ImageLoader.LoadImage("TetrisBackground.png");
         BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
         Pain.setBackground(background);
-        Back = new Image(Controller.class.getResource("backButton.png").toExternalForm());
+        Back = ImageLoader.LoadImage("backButton.png");
         BackButton.setImage(Back);
         ArrayList<String> scores;
         Score score = new Score("HighScore.txt");
@@ -68,13 +69,13 @@ public class ScoreController {
     }
 
     public void backButtonAction() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("menu/menu.fxml"));    //načtení popisu scény
+        Parent root = FXMLLoader.load(Controller.class.getResource("menu.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();
     }
 
     public void BackClickButton() {
-        Image SinglePlayerclick = new Image(Controller.class.getResource("backClickButton.png").toExternalForm());
+        Image SinglePlayerclick = ImageLoader.LoadImage("backClickButton.png");
         BackButton.setImage(SinglePlayerclick);
     }
 

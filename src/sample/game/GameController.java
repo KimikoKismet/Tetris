@@ -99,10 +99,12 @@ public class GameController implements EventHandler<KeyEvent> {
         kostickyImages.put(KostickaEnum.ZKO, ImageLoader.LoadImage("ZkoKosticka.png", KOSTICKA_SIZE, KOSTICKA_SIZE));
 
         if (Controller.pocethracu == 1) {
-            Image Singleplayer = ImageLoader.LoadImage("howToPlay.png");
+            Image Singleplayer = ImageLoader.LoadImage("HowToPlaySingleplayer.png");
             howToPlay.setImage(Singleplayer);
+        } else {
+            Image Multiplayer = ImageLoader.LoadImage("HowToPlayMultiplayer.png");
+            howToPlay.setImage(Multiplayer);
         }
-        // TODO pocet hracu 2
 
         GameInit();
     }
@@ -127,38 +129,7 @@ public class GameController implements EventHandler<KeyEvent> {
 
         vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
 
-        int scoreCounter = 0;
-        for (int radek = 0; radek < hraciPole.length; radek++) {
-            boolean kontrola = true;
-            for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
-                if (hraciPole[radek][sloupec] == null) {
-                    kontrola = false;
-                    break;
-                }
-            }
-            if (kontrola) {
-                umazRadek(radek, hraciPole);
-                hraciPole = posunZbytekDolu(radek,hraciPole);
-                vykresleni(gameBoard, hraciPole, playBackground,HRA_POCET_VIDITELNYCH_RADKU);
-
-                scoreCounter++;
-            }
-        }
-
-        switch (scoreCounter) {
-            case 1:
-                score = score + SCORE_UMAZANI_RADKU;
-                break;
-            case 2:
-                score = score + SCORE_UMAZANI_RADKU * 3;
-                break;
-            case 3:
-                score = score + SCORE_UMAZANI_RADKU * 5;
-                break;
-            default:
-                //nop
-        }
-
+        vymazZaplneneRadky();
         scoreLabel.setText(score+"");
     }
 
@@ -344,6 +315,41 @@ public class GameController implements EventHandler<KeyEvent> {
                 }
             }
         }
+    }
+
+    public void vymazZaplneneRadky() {
+        int scoreCounter = 0;
+        for (int radek = 0; radek < hraciPole.length; radek++) {
+            boolean kontrola = true;
+            for (int sloupec = 0; sloupec < hraciPole[0].length; sloupec++) {
+                if (hraciPole[radek][sloupec] == null) {
+                    kontrola = false;
+                    break;
+                }
+            }
+            if (kontrola) {
+                umazRadek(radek, hraciPole);
+                hraciPole = posunZbytekDolu(radek,hraciPole);
+                vykresleni(gameBoard, hraciPole, playBackground,HRA_POCET_VIDITELNYCH_RADKU);
+
+                scoreCounter++;
+            }
+        }
+
+        switch (scoreCounter) {
+            case 1:
+                score = score + SCORE_UMAZANI_RADKU;
+                break;
+            case 2:
+                score = score + SCORE_UMAZANI_RADKU * 3;
+                break;
+            case 3:
+                score = score + SCORE_UMAZANI_RADKU * 5;
+                break;
+            default:
+                //nop
+        }
+
     }
 
     public void GameOver() {

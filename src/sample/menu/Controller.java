@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import sample.Main;
 import sample.game.GameController;
 import sample.obrazky.ImageLoader;
+import sample.score.ScoreController;
 
 public class Controller {
     public AnchorPane Pain;
@@ -88,7 +89,7 @@ public class Controller {
     public void multiplayerButtonAction() throws Exception {
         pocethracu = 2;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game/game.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(GameController.class.getResource("game.fxml"));
         Parent root = fxmlLoader.load();
 
         Main.stage.setScene(new Scene(root, 600, 800));                         //vytvoření scény a nastavení zobrazení
@@ -107,7 +108,7 @@ public class Controller {
     }
 
     public void highScoresButtonAction() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("score1.fxml"));    //načtení popisu scény
+        Parent root = FXMLLoader.load(ScoreController.class.getResource("score1.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();
     }
