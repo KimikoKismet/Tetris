@@ -42,7 +42,7 @@ public class ScoreController {
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
         Pain.setBackground(background);
-        Back = ImageLoader.LoadImage("backButton.png");
+        Back = ImageLoader.LoadImage("BackButton.png");
         BackButton.setImage(Back);
         ArrayList<String> scores;
         Score score = new Score("HighScore.txt");
@@ -75,7 +75,7 @@ public class ScoreController {
     }
 
     public void BackClickButton() {
-        Image SinglePlayerclick = ImageLoader.LoadImage("backClickButton.png");
+        Image SinglePlayerclick = ImageLoader.LoadImage("BackClickButton.png");
         BackButton.setImage(SinglePlayerclick);
     }
 

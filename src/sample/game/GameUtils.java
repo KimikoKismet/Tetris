@@ -172,12 +172,6 @@ public class GameUtils {
         return kostickyImages.get(KostickaEnum.values()[randomindex]);
     }
 
-    public static void kontrolaScore(int score, Timeline timeline) {
 
-    }
-
-    public void levelUp(Timeline timeline, int level) {
-
-    }
 
 }

@@ -52,6 +52,9 @@ public class GameController implements EventHandler<KeyEvent> {
     public ImageView backButton;
     private Image back;
 
+    public ImageView retryButton;
+    private Image retry;
+
     public ImageView ramecek;
 
     public ImageView howToPlay;
@@ -65,6 +68,7 @@ public class GameController implements EventHandler<KeyEvent> {
     private Timeline timeline;
 
     private int score;
+    private int scorelvl;
 
 
     @FXML
@@ -78,8 +82,11 @@ public class GameController implements EventHandler<KeyEvent> {
         score = 0;
         scoreLabel.setText(score+"");
 
-        back = ImageLoader.LoadImage("backButton.png");
+        back = ImageLoader.LoadImage("ExitButton.png");
         backButton.setImage(back);
+
+        retry = ImageLoader.LoadImage("RetryButton.png");
+        retryButton.setImage(retry);
 
         playBackground = ImageLoader.LoadImage("Pole.png");
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
@@ -118,6 +125,7 @@ public class GameController implements EventHandler<KeyEvent> {
                 ae -> gameLoop()));                                                                 //ae = Action Event
         timeline.setCycleCount(Animation.INDEFINITE);   //wutever
         timeline.play();
+        scorelvl = 1;
     }
 
     public void gameLoop() {
@@ -131,6 +139,9 @@ public class GameController implements EventHandler<KeyEvent> {
 
         vymazZaplneneRadky();
         scoreLabel.setText(score+"");
+
+        scorelvl = timerUp(levelUp(score));
+
     }
 
     public void backButtonAction() throws Exception {
@@ -142,13 +153,28 @@ public class GameController implements EventHandler<KeyEvent> {
     }
 
     public void backClickButton() {
-        Image SinglePlayerclick = ImageLoader.LoadImage("backClickButton.png");
+        Image SinglePlayerclick = ImageLoader.LoadImage("ExitClickButton.png");
         backButton.setImage(SinglePlayerclick);
     }
 
     public void backReleaseButton() {
         backButton.setImage(back);
     }
+
+    public void retryButtonAction() throws Exception {
+        timeline.stop();
+        GameInit();
+    }
+
+    public void retryClickButton() {
+        Image retryClick = ImageLoader.LoadImage("RetryClickButton.png");
+        retryButton.setImage(retryClick);
+    }
+
+    public void retryReleaseButton() {
+        retryButton.setImage(retry);
+    }
+
 
     @Override
     public void handle(KeyEvent event) {
@@ -158,7 +184,7 @@ public class GameController implements EventHandler<KeyEvent> {
                 break;
             case DOWN:
                 posun(Smer.DOLU);
-                score = score + 1;
+                score = score + scorelvl;
                 break;
             case LEFT:
                 posun(Smer.DOLEVA);
@@ -168,7 +194,7 @@ public class GameController implements EventHandler<KeyEvent> {
                 break;
             case SPACE:
                 while (posun(Smer.DOLU)) {
-                    score = score + 2;
+                    score = score + 2*scorelvl;
                 }
                 break;
             default:
@@ -194,7 +220,7 @@ public class GameController implements EventHandler<KeyEvent> {
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT5:
-                    nasledujuKosticka = new Trubka(nahodnaBarva);
+                    nasledujuKosticka = new ZkoNormal(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT6:
@@ -202,7 +228,7 @@ public class GameController implements EventHandler<KeyEvent> {
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT7:
-                    nasledujuKosticka = new ZkoNormal(nahodnaBarva);
+                    nasledujuKosticka = new Trubka(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
             }
@@ -338,18 +364,61 @@ public class GameController implements EventHandler<KeyEvent> {
 
         switch (scoreCounter) {
             case 1:
-                score = score + SCORE_UMAZANI_RADKU;
+                score = score + SCORE_UMAZANI_RADKU * scorelvl;
                 break;
             case 2:
-                score = score + SCORE_UMAZANI_RADKU * 3;
+                score = score + SCORE_UMAZANI_RADKU * scorelvl * 3;
                 break;
             case 3:
-                score = score + SCORE_UMAZANI_RADKU * 5;
+                score = score + SCORE_UMAZANI_RADKU * scorelvl * 5;
                 break;
             default:
                 //nop
         }
 
+    }
+
+    public int timerUp(int lvl) {
+        int scorelevel = 1;
+        switch (lvl) {
+            case 1:
+                timeline.rateProperty().setValue(TIMER_LEVEL_1);
+                scorelevel = 1;
+                break;
+            case 2:
+                timeline.rateProperty().setValue(TIMER_LEVEL_2);
+                scorelevel = 10;
+                break;
+            case 3:
+                timeline.rateProperty().setValue(TIMER_LEVEL_3);
+                scorelevel = 50;
+                break;
+            case 4:
+                timeline.rateProperty().setValue(TIMER_LEVEL_4);
+                scorelevel = 100;
+                break;
+            case 5:
+                timeline.rateProperty().setValue(TIMER_LEVEL_5);
+                scorelevel = 1000;
+                break;
+            default:
+                //nop
+        }
+        return scorelevel;
+    }
+
+    public int levelUp(int score) {
+        int lvl = 1;
+        if (score >= SCORE_LEVEL_5) {
+            lvl = 5;
+        } else if (score >= SCORE_LEVEL_4) {
+            lvl = 4;
+        } else if (score >= SCORE_LEVEL_3) {
+            lvl = 3;
+        } else if (score >= SCORE_LEVEL_2) {
+            lvl = 2;
+        }
+        return lvl;
     }
 
     public void GameOver() {
@@ -387,4 +456,6 @@ public class GameController implements EventHandler<KeyEvent> {
             }
         });
     }
+
+
 }

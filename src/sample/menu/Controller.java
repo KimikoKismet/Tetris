@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import sample.Main;
 import sample.game.GameController;
 import sample.obrazky.ImageLoader;
+import sample.options.OptionsController;
 import sample.score.ScoreController;
 
 public class Controller {
@@ -39,16 +40,16 @@ public class Controller {
         singleplayer = ImageLoader.LoadImage("SinglePlayerButton.png");
         singleplayerButton.setImage(singleplayer);
 
-        multiplayer = ImageLoader.LoadImage("multiplayerButton.png");
+        multiplayer = ImageLoader.LoadImage("MultiplayerButton.png");
         multiplayerButton.setImage(multiplayer);
 
         highscores = ImageLoader.LoadImage("HighScoreButton.png");
         highScoresButton.setImage(highscores);
 
-        exit = ImageLoader.LoadImage("exitButton.png");
+        exit = ImageLoader.LoadImage("ExitButton.png");
         exitButton.setImage(exit);
 
-        options = ImageLoader.LoadImage("optionsButton.png");
+        options = ImageLoader.LoadImage("OptionsButton.png");
         optionsButton.setImage(options);
     }
 
@@ -57,7 +58,7 @@ public class Controller {
     }
 
     public void exitClickButton() {
-        Image Exitclick = ImageLoader.LoadImage("exitClickButton.png");
+        Image Exitclick = ImageLoader.LoadImage("ExitClickButton.png");
         exitButton.setImage(Exitclick);
     }
 
@@ -78,7 +79,7 @@ public class Controller {
     }
 
     public void singleplayerClickButton() {
-        Image SinglePlayerclick = ImageLoader.LoadImage("singleplayerClickButton.png");
+        Image SinglePlayerclick = ImageLoader.LoadImage("SinglePlayerClickButton.png");
         singleplayerButton.setImage(SinglePlayerclick);
     }
 
@@ -99,7 +100,7 @@ public class Controller {
     }
 
     public void multiplayerClickButton() {
-        Image Multiplayerclick = ImageLoader.LoadImage("multiplayerClickButton.png");
+        Image Multiplayerclick = ImageLoader.LoadImage("MultiplayerClickButton.png");
         multiplayerButton.setImage(Multiplayerclick);
     }
 
@@ -114,7 +115,7 @@ public class Controller {
     }
 
     public void highScoreClickButton() {
-        Image Highscoreclick = ImageLoader.LoadImage("highScoreClickButton.png");
+        Image Highscoreclick = ImageLoader.LoadImage("HighScoreClickButton.png");
         highScoresButton.setImage(Highscoreclick);
     }
 
@@ -123,13 +124,13 @@ public class Controller {
     }
 
     public void optionsButtonAction() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("options.fxml"));    //načtení popisu scény
+        Parent root = FXMLLoader.load(OptionsController.class.getResource("options.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();
     }
 
     public void optionsClickButton() {
-        Image optionsClick = ImageLoader.LoadImage("optionsClickButton.png");
+        Image optionsClick = ImageLoader.LoadImage("OptionsClickButton.png");
         optionsButton.setImage(optionsClick);
     }
 

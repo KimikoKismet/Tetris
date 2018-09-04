@@ -22,4 +22,14 @@ public class Constants {
         {1,0}
     };
 
+    public static final int SCORE_LEVEL_2 = 2000;
+    public static final int SCORE_LEVEL_3 = 5000;
+    public static final int SCORE_LEVEL_4 = 10000;
+    public static final int SCORE_LEVEL_5 = 20000;
+
+    public static final int TIMER_LEVEL_1 = 1;
+    public static final int TIMER_LEVEL_2 = 2;
+    public static final int TIMER_LEVEL_3 = 3;
+    public static final int TIMER_LEVEL_4 = 4;
+    public static final int TIMER_LEVEL_5 = 5;
 }

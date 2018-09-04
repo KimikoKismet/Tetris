@@ -14,7 +14,7 @@ import java.net.URL;
  */
 public class ImageLoader {
     public static Image LoadImage(String nazevSouboru) {
-        Image image = new Image(ImageLoader.class.getResource(nazevSouboru).toString());
+        Image image = new Image(ImageLoader.class.getResource(nazevSouboru).toExternalForm());
         return image;
     }
 
