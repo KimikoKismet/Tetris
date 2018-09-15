@@ -70,16 +70,18 @@ public class GameController implements EventHandler<KeyEvent> {
     private int score;
     private int scorelvl;
 
-
+    /**
+     * načtení herního plánu, nastavení skóre na nula
+     */
     @FXML
-    public void initialize() throws Exception {
+    public void initialize() {
         Image image = ImageLoader.LoadImage("TetrisBackground.png");
         BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
         container.setBackground(background);
 
-        score = 0;
+        score = 0;                          //nastavení skóre na nula
         scoreLabel.setText(score+"");
 
         back = ImageLoader.LoadImage("ExitButton.png");
@@ -98,6 +100,7 @@ public class GameController implements EventHandler<KeyEvent> {
         GraphicsContext gc2 = kosticka.getGraphicsContext2D();
         gc2.drawImage(nasledujiciKostickaBackground,0,0);                                                               //vykresleni hraciho pozadi
 
+        //obrazky si predem nactu do mapy, aby to bylo rychlejší
         kostickyImages = new HashMap<>(KostickaEnum.values().length);
         kostickyImages.put(KostickaEnum.CTVEREC, ImageLoader.LoadImage("CtverecKosticka.png", KOSTICKA_SIZE, KOSTICKA_SIZE));
         kostickyImages.put(KostickaEnum.TRUBKA, ImageLoader.LoadImage("TrubkaKosticka.png", KOSTICKA_SIZE, KOSTICKA_SIZE));
@@ -105,6 +108,7 @@ public class GameController implements EventHandler<KeyEvent> {
         kostickyImages.put(KostickaEnum.LKO, ImageLoader.LoadImage("LkoKosticka.png", KOSTICKA_SIZE, KOSTICKA_SIZE));
         kostickyImages.put(KostickaEnum.ZKO, ImageLoader.LoadImage("ZkoKosticka.png", KOSTICKA_SIZE, KOSTICKA_SIZE));
 
+        //napoveda
         if (Controller.pocethracu == 1) {
             Image Singleplayer = ImageLoader.LoadImage("HowToPlaySingleplayer.png");
             howToPlay.setImage(Singleplayer);
@@ -113,37 +117,47 @@ public class GameController implements EventHandler<KeyEvent> {
             howToPlay.setImage(Multiplayer);
         }
 
-        GameInit();
+        GameInit(); //zahájí hru
     }
 
+    /**
+     * inicializace hry
+     */
     public void GameInit() {
         aktualKosticka = nahodnaKosticka(kostickyImages);
         nasledujuKosticka = nahodnaKosticka(kostickyImages);
         hraciPole = new Kosticka[HRA_POCET_RADKU][HRA_POCET_SLOUPCU];
 
         timeline = new Timeline(new KeyFrame(Duration.millis(POCATECNI_RYCHLOST),          //vytvoreni TIMERU
-                ae -> gameLoop()));                                                                 //ae = Action Event
-        timeline.setCycleCount(Animation.INDEFINITE);   //wutever
+                ae -> gameLoop()));                                                        //ae = Action Event
+        timeline.setCycleCount(Animation.INDEFINITE);                                      //nastavení časovače tak, aby pokračoval, dokud jej něco nevypne
         timeline.play();
-        scorelvl = 1;
+        scorelvl = 1; //začíná se na levelu 1
     }
 
+    /**
+     * herní operace, který se mají provést v každém tiku timeru
+     */
     public void gameLoop() {
-        if (kontrolaGameOver(hraciPole)) {
+        if (kontrolaGameOver(hraciPole)) {           //pokud je splněná podmínka GameOver, zavolá funkci GameOver
             GameOver();
         }
 
-        posun(Smer.DOLU);
+        posun(Smer.DOLU);   //při každém "tiku" timeru posune kosticku o 1 dolu
 
-        vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
+        vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);   //vykreslí nasledujici kosticku do nahledu
 
-        vymazZaplneneRadky();
-        scoreLabel.setText(score+"");
+        vymazZaplneneRadky();   //smaže plné řádky
+        scoreLabel.setText(score+"");   //vypíše skóre
 
-        scorelvl = timerUp(levelUp(score));
+        scorelvl = timerUp(levelUp(score));     //nastaví hru podle skóre na daný level
 
     }
 
+    /**
+     * pokud stiskneme tlačítko zpět, vrátí nás zpět do menu a vypne timer
+     * @throws Exception
+     */
     public void backButtonAction() throws Exception {
         Parent root = FXMLLoader.load(Controller.class.getResource("menu.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
@@ -152,6 +166,9 @@ public class GameController implements EventHandler<KeyEvent> {
         timeline.stop();
     }
 
+    /**
+     * při najetí kurzorem myši na tlačítko - změna obrázku
+     */
     public void backClickButton() {
         Image SinglePlayerclick = ImageLoader.LoadImage("ExitClickButton.png");
         backButton.setImage(SinglePlayerclick);
@@ -161,11 +178,17 @@ public class GameController implements EventHandler<KeyEvent> {
         backButton.setImage(back);
     }
 
-    public void retryButtonAction() throws Exception {
+    /**
+     * restartuje hru
+     */
+    public void retryButtonAction() {
         timeline.stop();
         GameInit();
     }
 
+    /**
+     * při najetí kurzorem myši na tlačítko - změna obrázku
+     */
     public void retryClickButton() {
         Image retryClick = ImageLoader.LoadImage("RetryClickButton.png");
         retryButton.setImage(retryClick);
@@ -175,16 +198,19 @@ public class GameController implements EventHandler<KeyEvent> {
         retryButton.setImage(retry);
     }
 
-
+    /**
+     * obsluha stisku kláves
+     * @param event
+     */
     @Override
     public void handle(KeyEvent event) {
         switch (event.getCode()) {
             case UP:
-                rotace(aktualKosticka);
+                rotace(aktualKosticka); //otočí aktuální kostičku o 90° doleva
                 break;
             case DOWN:
-                posun(Smer.DOLU);
-                score = score + scorelvl;
+                posun(Smer.DOLU);   //posune aktuální kostičku o 1 políčko dolů
+                score = score + scorelvl;   //přičte určené skóre
                 break;
             case LEFT:
                 posun(Smer.DOLEVA);
@@ -193,41 +219,48 @@ public class GameController implements EventHandler<KeyEvent> {
                 posun(Smer.DOPRAVA);
                 break;
             case SPACE:
-                while (posun(Smer.DOLU)) {
-                    score = score + 2*scorelvl;
+                while (posun(Smer.DOLU)) {      //vyvolává posun dokud to jde
+                    score = score + 2*scorelvl;     //přičte určené skóre
                 }
                 break;
             default:
                 // nop
         }
-        if (Controller.pocethracu == 2) {
+        if (Controller.pocethracu == 2) {   //nastavení kláves pro multiplayer
             Image nahodnaBarva = nahodnaBarva(kostickyImages);
             switch (event.getCode()) {
                 case DIGIT1:
+                    //nastaví následující kostičku na Čtverec
                     nasledujuKosticka = new Ctverec(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT2:
+                    //nastaví následující kostičku na LkoMirror
                     nasledujuKosticka = new LkoMirror(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT3:
+                    //nastaví následující kostičku na LkoNormal
                     nasledujuKosticka = new LkoNormal(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT4:
+                    //nastaví následující kostičku na Téčko
                     nasledujuKosticka = new TkoKosticka(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT5:
+                    //nastaví následující kostičku na ZkoNormal
                     nasledujuKosticka = new ZkoNormal(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT6:
+                    //nastaví následující kostičku na ZkoMirror
                     nasledujuKosticka = new ZkoMirror(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
                 case DIGIT7:
+                    //nastaví následující kostičku na Trubku
                     nasledujuKosticka = new Trubka(nahodnaBarva);
                     vykresleni(kosticka, nasledujuKosticka.getTvar(), nasledujiciKostickaBackground);
                     break;
@@ -241,6 +274,7 @@ public class GameController implements EventHandler<KeyEvent> {
      * @return true pokud se posunuti povedlo,jinak false
      */
     public boolean posun(Smer smer) {
+        //nastavení posunutí souřadnic
         int x = aktualKosticka.getX() + smer.getX();
         int y = aktualKosticka.getY() + smer.getY();
 
@@ -250,6 +284,7 @@ public class GameController implements EventHandler<KeyEvent> {
 
         switch (status) {
             case OK:
+                //posune kostičku a uloží ji do hracího pole
                 vykresleni(gameBoard, copyPole, playBackground, HRA_POCET_VIDITELNYCH_RADKU);
                 aktualKosticka.setX(x);
                 aktualKosticka.setY(y);
@@ -257,16 +292,14 @@ public class GameController implements EventHandler<KeyEvent> {
             case KOLIZE_S_KOSTKOU_ZE_STRANY:
                 //jdu na další řádek :-)
             case KOLIZE_SE_STENOU:
+                //vykreslí pole stejně, jako kdyby se nic nestalo
                 copyPole = GameUtils.copy(hraciPole);
                 GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, Smer.NIC);
                 vykresleni(gameBoard, copyPole, playBackground, HRA_POCET_VIDITELNYCH_RADKU);
                 return true;
             case KOLIZE_S_KONCEM:
+                //uloží spadlou kostku do hracího pole a nastaví novou následující kostičku
                 copyPole = GameUtils.copy(hraciPole);
-                /*
-                 * Pokud je null, tak to znamena, ze se kostka nemuze pohnout smerem dolu a je nutne pridat do
-                 * spadlych kostek predchozi krok tj. kdy je kostka o jedna vyse
-                 */
                 GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, Smer.NIC);
                 hraciPole = copyPole;
                 aktualKosticka = nasledujuKosticka;
@@ -352,6 +385,9 @@ public class GameController implements EventHandler<KeyEvent> {
         }
     }
 
+    /**
+     * vymaze plné řádky a přičte určené skóre
+     */
     public void vymazZaplneneRadky() {
         int scoreCounter = 0;
         for (int radek = 0; radek < hraciPole.length; radek++) {
@@ -438,20 +474,6 @@ public class GameController implements EventHandler<KeyEvent> {
         dialog.setTitle("Game Over");
         dialog.setHeaderText("GAME OVER. Do you want to save your score");
         dialog.setContentText("Please enter your name loser:");
-
-        /*
-         * Nezarucena informace -- takhle to fungvalo ve starsi knihovne pro GUI -- Swing.
-         *
-         * Obsluha udalosti (mys, klavesnice, tlacitka) probiha v GUI servisnim vlakne a stejne tak
-         * zobrazeni formularu a diaogu.
-         *
-         * Tady herni smycka je obsluhovana timerem, ktery vytvari svoje vlastni vlakno.
-         *
-         * Kdyz se pokusim zavolat dialog.showAndWait() z vlakna timeru, tak vypadne vyjimka
-         * "java.lang.IllegalStateException: showAndWait is not allowed during animation or layout processing"
-         *
-         * --> Vyresi se to tak, ze zobrazeni dialogu se bude delegovat na GUI vlakno pomoci Platform.runLater.
-         */
 
         // Zobrazeni dialogu pro zadani jmena
         Platform.runLater(() -> {

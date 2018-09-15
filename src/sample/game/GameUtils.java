@@ -16,6 +16,11 @@ import static sample.Constants.POCET_KOSTICEK;
  * Time: 18:10
  */
 public class GameUtils {
+    /**
+     * zkopíruje pole kostiček
+     * @param src
+     * @return
+     */
     public static Kosticka[][] copy(Kosticka src[][]) {
         Kosticka[][] copy = new Kosticka[src.length][src[0].length];
         for (int i = 0; i<src.length; i++) {
@@ -151,10 +156,15 @@ public class GameUtils {
         return false;
     }
 
+    /**
+     * vygeneruje náhodnou kostičku
+     * @param kostickyImages mapa pro obrázky kostiček
+     * @return vrací náhodnou kostičku
+     */
     public static Tvar nahodnaKosticka(Map<KostickaEnum, Image> kostickyImages) {
         Random random = new Random();
         int randomindex = random.nextInt(POCET_KOSTICEK);
-        Image nahodnaBarva = nahodnaBarva(kostickyImages);
+        Image nahodnaBarva = nahodnaBarva(kostickyImages);  //nastaví náhodnou barvu pro kosticky
 
         switch (randomindex) {
             case 0:
@@ -176,6 +186,11 @@ public class GameUtils {
         }
     }
 
+    /**
+     * nastaví náhodnou barvu
+     * @param kostickyImages
+     * @return
+     */
     public static Image nahodnaBarva(Map<KostickaEnum, Image> kostickyImages) {
         Random random = new Random();
         int randomindex = random.nextInt(POCET_BAREV);
