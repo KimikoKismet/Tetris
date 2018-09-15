@@ -3,3 +3,5 @@ Pyjoneer: 10000
 FengLee: 184
 Kimiko: 210
 N00b.: 210
+N00b.: 1279
+N00b.: 1539

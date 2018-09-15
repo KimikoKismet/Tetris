@@ -1,6 +1,5 @@
 package sample.game;
 
-import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import sample.tvarykosticek.*;
 
@@ -27,21 +26,24 @@ public class GameUtils {
         return copy;
     }
 
-    /**
+    public enum VlozeniKostkyStatus {
+        OK, KOLIZE_SE_STENOU, KOLIZE_S_KONCEM, KOLIZE_S_KOSTKOU_ZE_STRANY
+    }
+
+      /**
      * pokusi se vlozit kostku do hraciho pole
      * @param kostka kostka
-     * @param src puvodni hraci pole
-     * @param dest hraci pole pro vlozeni kostky
-     * @param offsetX o kolik se ma kostka posunout
-     * @param offsetY o kolik se ma kostka posunout
-     * @return vraci true pokud se podarila kostka vlozit, jinak false
+     * @param zdroj puvodni hraci pole
+     * @param poloha hraci pole pro vlozeni kostky
+     * @param smer smer posunu
+     * @return
      */
-    public static boolean vlozeniKosticky(Tvar kostka, Kosticka src[][], Kosticka[][] dest, int offsetX, int offsetY) {
+    public static VlozeniKostkyStatus vlozeniKosticky(Tvar kostka, Kosticka[][] zdroj, Kosticka[][] poloha, Smer smer) {
 
-        int x = kostka.getX() + offsetX;
-        int y = kostka.getY() + offsetY;
+        int x = kostka.getX() + smer.getX(); //změna souřednic
+        int y = kostka.getY() + smer.getY();
 
-        boolean status = true;
+        VlozeniKostkyStatus status = VlozeniKostkyStatus.OK;
 
         loop: for (int radek = 0; radek < kostka.getTvar().length; radek++) {
             for (int sloupec = 0; sloupec < kostka.getTvar()[radek].length; sloupec++) {
@@ -60,15 +62,24 @@ public class GameUtils {
                     continue;
                 }
 
-                if (radek + y == src.length) {
-                    status = false;
+                if (sloupec + x >= zdroj[0].length || sloupec + x < 0) {                    //kontrola jestli kostka nenarazila na levou nebo pravou stěnou
+                    status = VlozeniKostkyStatus.KOLIZE_SE_STENOU;
                     break loop;
                 }
 
-                if (src[radek + y][sloupec + x] == null) {
-                    dest[radek + y][sloupec + x] = kostka.getTvar()[radek][sloupec];
+                if (radek + y == zdroj.length) {                                            //kontrola jestli kostka nedopadla ke spodní hraně
+                    status = VlozeniKostkyStatus.KOLIZE_S_KONCEM;
+                    break loop;
+                }
+
+                if (zdroj[radek + y][sloupec + x] == null) {                                //kontrola jestli na místě kam se má posunout kostka je místo
+                    poloha[radek + y][sloupec + x] = kostka.getTvar()[radek][sloupec];
                 } else {
-                    status = false;
+                    if (smer != Smer.DOLU) {
+                        status = VlozeniKostkyStatus.KOLIZE_S_KOSTKOU_ZE_STRANY;
+                    } else {
+                        status = VlozeniKostkyStatus.KOLIZE_S_KONCEM;
+                    }
                     break loop;
                 }
             }

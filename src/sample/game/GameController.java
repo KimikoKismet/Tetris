@@ -246,26 +246,35 @@ public class GameController implements EventHandler<KeyEvent> {
 
         // Vytvoreni kopie hraciho pole s vlozenou kostickou s posunem dle smeru
         Kosticka[][] copyPole = GameUtils.copy(hraciPole);
-        boolean status = GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, smer.getX(), smer.getY());
+        VlozeniKostkyStatus status = GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, smer);
 
-        if (status) {
-            vykresleni(gameBoard, copyPole, playBackground, HRA_POCET_VIDITELNYCH_RADKU);
-            aktualKosticka.setX(x);
-            aktualKosticka.setY(y);
-            return true;
-        } else {
-            copyPole = GameUtils.copy(hraciPole);
+        switch (status) {
+            case OK:
+                vykresleni(gameBoard, copyPole, playBackground, HRA_POCET_VIDITELNYCH_RADKU);
+                aktualKosticka.setX(x);
+                aktualKosticka.setY(y);
+                return true;
+            case KOLIZE_S_KOSTKOU_ZE_STRANY:
+                //jdu na další řádek :-)
+            case KOLIZE_SE_STENOU:
+                copyPole = GameUtils.copy(hraciPole);
+                GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, Smer.NIC);
+                vykresleni(gameBoard, copyPole, playBackground, HRA_POCET_VIDITELNYCH_RADKU);
+                return true;
+            case KOLIZE_S_KONCEM:
+                copyPole = GameUtils.copy(hraciPole);
                 /*
                  * Pokud je null, tak to znamena, ze se kostka nemuze pohnout smerem dolu a je nutne pridat do
                  * spadlych kostek predchozi krok tj. kdy je kostka o jedna vyse
                  */
-            GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, 0, 0);
-            hraciPole = copyPole;
-            aktualKosticka = nasledujuKosticka;
-            nasledujuKosticka = nahodnaKosticka(kostickyImages);
-
-            return false;
+                GameUtils.vlozeniKosticky(aktualKosticka, hraciPole, copyPole, Smer.NIC);
+                hraciPole = copyPole;
+                aktualKosticka = nasledujuKosticka;
+                nasledujuKosticka = nahodnaKosticka(kostickyImages);
+                return false;
         }
+
+        return false;
     }
 
     /**
