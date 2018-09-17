@@ -42,8 +42,10 @@ public class ScoreController {
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
         Pain.setBackground(background);
+
         Back = ImageLoader.LoadImage("BackButton.png");
         BackButton.setImage(Back);
+
         ArrayList<String> scores;
         Score score = new Score("HighScore.txt");
         scores = score.prohlizeni();
@@ -68,17 +70,27 @@ public class ScoreController {
         //Table.getSortOrder().add(Scores);
     }
 
+    /**
+     * pokud stiskneme tlačítko zpět, vrátí nás zpět do menu a vypne timer
+     * @throws Exception
+     */
     public void backButtonAction() throws Exception {
         Parent root = FXMLLoader.load(Controller.class.getResource("menu.fxml"));    //načtení popisu scény
         Main.stage.setScene(new Scene(root, 600, 800));                 //vytvoření scény a nastavení zobrazení
         Main.stage.show();
     }
 
+    /**
+     * při najetí kurzorem myši na tlačítko - změna obrázku (rozsvícení tlačítka)
+     */
     public void BackClickButton() {
         Image SinglePlayerclick = ImageLoader.LoadImage("BackClickButton.png");
         BackButton.setImage(SinglePlayerclick);
     }
 
+    /**
+     * změna obrázku
+     */
     public void BackReleaseButton() {
         BackButton.setImage(Back);
     }
