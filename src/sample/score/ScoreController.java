@@ -42,17 +42,10 @@ public class ScoreController {
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
         Pain.setBackground(background);
-<<<<<<< HEAD
 
         Back = ImageLoader.LoadImage("BackButton.png");
         BackButton.setImage(Back);
 
-=======
-        
-        Back = ImageLoader.LoadImage("BackButton.png");
-        BackButton.setImage(Back);
-        
->>>>>>> 4ea249651c039f17d3e213ec040cf05e0a25cb4a
         ArrayList<String> scores;
         Score score = new Score("HighScore.txt");
         scores = score.prohlizeni();
