@@ -2,6 +2,6 @@ FengLee: 5000
 Pyjoneer: 10000
 FengLee: 184
 Kimiko: 210
-N00b.: 210
-N00b.: 1279
-N00b.: 1539
+Randomák: 210
+Randomák: 1279
+Randomák: 1539

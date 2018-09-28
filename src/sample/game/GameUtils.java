@@ -39,11 +39,11 @@ public class GameUtils {
      * pokusi se vlozit kostku do hraciho pole
      * @param kostka kostka
      * @param zdroj puvodni hraci pole
-     * @param poloha hraci pole pro vlozeni kostky
+     * @param novePole hraci pole pro vlozeni kostky
      * @param smer smer posunu
      * @return
      */
-    public static VlozeniKostkyStatus vlozeniKosticky(Tvar kostka, Kosticka[][] zdroj, Kosticka[][] poloha, Smer smer) {
+    public static VlozeniKostkyStatus vlozeniKosticky(Tvar kostka, Kosticka[][] zdroj, Kosticka[][] novePole, Smer smer) {
 
         int x = kostka.getX() + smer.getX(); //změna souřednic
         int y = kostka.getY() + smer.getY();
@@ -78,7 +78,7 @@ public class GameUtils {
                 }
 
                 if (zdroj[radek + y][sloupec + x] == null) {                                //kontrola jestli na místě kam se má posunout kostka je místo
-                    poloha[radek + y][sloupec + x] = kostka.getTvar()[radek][sloupec];
+                    novePole[radek + y][sloupec + x] = kostka.getTvar()[radek][sloupec];
                 } else {
                     if (smer != Smer.DOLU) {
                         status = VlozeniKostkyStatus.KOLIZE_S_KOSTKOU_ZE_STRANY;

@@ -311,13 +311,13 @@ public class GameController implements EventHandler<KeyEvent> {
     }
 
     /**
-     * Otoci kostku o uhel dany matici {@link Constants#ULTIMATE_MATICE}.
+     * Otoci kostku o uhel dany matici {@link Constants#MATICE_OTOCENI}.
      * @param aktual tvar k otoceni
      */
     public void rotace(Tvar aktual) {
 
         // Otoceni
-        int[][] otoceni = nasobeniMatic(ULTIMATE_MATICE, aktual.getBody());
+        int[][] otoceni = nasobeniMatic(MATICE_OTOCENI, aktual.getBody());
 
         /*
          * Pri otoceni muze dojit k presunu do jineho kvadrantu (- souradnice x nebo y), takze je potreba otocenou
@@ -338,6 +338,7 @@ public class GameController implements EventHandler<KeyEvent> {
         }
 
         Kosticka[][] tmp = aktual.createTvar(otoceni);
+
 
         aktualKosticka.setTvar(tmp);
 
@@ -481,7 +482,7 @@ public class GameController implements EventHandler<KeyEvent> {
             Optional<String> result = dialog.showAndWait();
 
             if (result.isPresent()) {
-                name = result.get().length() < 3 ? "N00b." : result.get();
+                name = result.get().length() < 3 ? "Randomák" : result.get();
                 Score tmp = new Score("HighScore.txt");
                 tmp.SaveHighScore(score,name);
             }

@@ -81,7 +81,7 @@ public class Controller {
         Main.stage.setScene(new Scene(root, 600, 800));                         //vytvoření scény a nastavení zobrazení
         Main.stage.show();                                                                    //zobrazí připravenou scénu
 
-        Main.stage.getScene().setOnKeyPressed(fxmlLoader.<GameController>getController());
+        Main.stage.getScene().setOnKeyPressed(fxmlLoader.<GameController>getController());      //
     }
 
     /**

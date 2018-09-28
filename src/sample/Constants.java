@@ -17,7 +17,7 @@ public class Constants {
     public static final int POCET_BAREV = 5;
 
     public static final int SCORE_UMAZANI_RADKU = 100;
-    public static final int[][] ULTIMATE_MATICE = new int[][] {
+    public static final int[][] MATICE_OTOCENI = new int[][] {
         {0,-1},
         {1,0}
     };
